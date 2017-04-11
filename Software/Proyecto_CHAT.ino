@@ -74,7 +74,7 @@ byte modo = 1;                                  //variable donde almacenamos el 
 char botones;                                   //variable donde almacenamos el último botón leido.
 //byte contadorNumeros = 0;                       //variable donde almacenamos la posición de cada número, es decir, en la operación 10+21, el número 10 está la posición 1 y el 21 está en la posición 2.
 
-String stringOperacion = "5+(7-(9+8))";
+String stringOperacion = "(5+1)e5";
 //String stringOperacion = "((4+7)+5)+(9+8)";
 //String stringOperacion = "9+8+5";
 //String stringOperacion = "(5+7)+(9+8)";
@@ -116,67 +116,43 @@ void leerBotones() {
   char botonesB;                                //declaramos otro tercio del teclado
   char botonesC;                                //declaramos el último tercio del teclado
   botones = 0;                                  //ponemos la variable global de botones en 0. Así no nos interfiere la lectura anterior de los botones
-  botonesA = keypad.getKey();
-  botonesB = keypad1.getKey();
-  botonesC = keypad2.getKey();
-  if (botonesA) {
-    botones = botonesA;
+  botonesA = keypad.getKey();                   //asociamos el primer tercio del teclado con la variable botonesA
+  botonesB = keypad1.getKey();                  //asociamos el segundo tercio del teclado con la variable botonesB
+  botonesC = keypad2.getKey();                  //asociamos el tercer tercio del teclado con la variable botonesC
+  if (botonesA) {                               //si botonesA tiene algún dato disponible... es decir, si hemos pulsado un botón del primer tercio del teclado
+    botones = botonesA;                         //guardamos en la variable global de los botones el valor obtenido del primer tercio del teclado (en caso de que haya algún dato disponible)
   }
-  if (botonesB) {
+  if (botonesB) {                               //lo mismo pero con el segundo tercio del teclado
     botones = botonesB;
   }
-  if (botonesC) {
+  if (botonesC) {                               //lo mismo pero con el tercer tercio del teclado
     botones = botonesC;
   }
 }
 
-float deRadianesAGrados(float a) {
+float deRadianesAGrados(float a) {              //función para pasar de radianes a grados
   a = (a / 360) * 2 * PI;
   return a;
 }
 
 
 
-void GENERAL_distribucionBotones() {
+void GENERAL_distribucionBotones() {             //función por si uno de los botones que hemos pulsado es para cambiar de modo
 
 }
 
-void CALC_deBotonesAString() {
-  stringOperacion = stringOperacion + botones;
-
-  if (botones == '1') {
-    stringOperacion = "((4+7)+5)+(9+8)";
-  }
-  if (botones == '2') {
-    stringOperacion = "(9+7)+((4+7)+5)";
-  }
-  if (botones == '3') {
-    stringOperacion = "(9+7)+(4+7)";
-  }
-  if (botones == '4') {
-    stringOperacion = "4+(((5+8)+6)+3)";
-  }
-
-  //Serial.println(stringOperacion);
+void CALC_deBotonesAString() {                   //función para guardar el caracter del botón pulsado (por ejemplo '2') en un string. De esta forma podremos borrar un carácter si nos confundimos
+  stringOperacion = stringOperacion + botones;   //guardamos en stringOperacion el caracter del botón pulsado.
 }
 
-//boolean activadorMaximoContadorParentesis = 0;
-
-
-const byte TAMANO_INICIO_FINAL_PARENTESIS = 10;
-//byte inicioParentesis = 0;
-//byte finalParentesis = 0;
-byte generalInicioParentesis[TAMANO_INICIO_FINAL_PARENTESIS] = {0};
-byte generalFinalParentesis[TAMANO_INICIO_FINAL_PARENTESIS] = {0};
-//byte maximoContadorParentesisFinal = 0;
-//byte maximoContadorParentesisInicio = 0;
-boolean contadorInicioFinalParentesis = 0;
+//VARIABLES PARA PODER RESOLVER LOS PARENTESIS
+byte generalInicioParentesis[3] = {0};           //variable donde guardaremos la posicion del primer parentesis de inicio y el último. EXPLICACION: el paréntesis de inicio es: '('. Por ejemplo en la operacion 5*(4*(6+7)) el primer parentesis inicio tiene la posicion 2 y el último 5 (empieza a contar desde el 0)
+byte generalFinalParentesis[3] = {0};            //variable donde haremos lo mismo que en la anterior pero en vez de con el paréntesis inicio lo haremos con el paréntesis final ')'. 
+boolean contadorInicioFinalParentesis = 0;       //
 boolean activadorGeneralFinalParentesis = 0;
 boolean activadorInicioParentesis = 0;
 boolean activadorParentesis = 0;
-
 byte contadorParentesis = 0;
-
 const byte TAMANO_SUB_OPERACION = 2;
 String subOperacion[TAMANO_SUB_OPERACION];
 
@@ -216,8 +192,8 @@ void CALC_solucionarTotalOperacion() {
         }
         else {
           generalInicioParentesis[0] = 0;
-          generalFinalParentesis[1] = 0;
-          generalFinalParentesis[2] = 0;
+          generalInicioParentesis[1] = 0;
+          generalInicioParentesis[2] = 0;
           generalFinalParentesis[0] = 0;
           generalFinalParentesis[1] = 0;
           generalFinalParentesis[2] = 0;
@@ -318,9 +294,17 @@ void CALC_solucionarOperacion() {
   byte contadorValores = 0;
   const byte TAMANOVALORES = 20;
   float valorNumerico[TAMANOVALORES] = {0};
+  char posicionSignos[TAMANOVALORES] = {0};
   bool activadorMenos = 0;
   byte contadorActivadorMenos = 0;
   bool activadorNumeros = 0;
+
+  //SIGNOS Y OPERACION
+  const char MULTIPLICACION = 'x';
+  const char DIVISION = '/';
+  const char POTENCIA = 'e';
+
+
 
   for (byte i = 0; i < longitudOperacion; i++) {
     char caracter = subOperacion[1].charAt(i);
@@ -337,13 +321,7 @@ void CALC_solucionarOperacion() {
     }
    
     if ((caracter < 48) or (caracter > 57)) {
-      if (activadorNumeros == 1) {
-        contadorActivadorMenos = 0;
-        activadorMenos = 0;
-        contadorValores++;
-        numeroAnterior = 0;
-      }
-      activadorNumeros = 0;
+      
       if (caracter == '-') {
         contadorActivadorMenos++;
         if ((contadorActivadorMenos % 2) == 1) {
@@ -353,9 +331,17 @@ void CALC_solucionarOperacion() {
           activadorMenos = 0;
         }
       }
+      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA)) {
+        posicionSignos[contadorValores] = caracter;
+      }
 
-
-      
+      if (activadorNumeros == 1) {
+        contadorActivadorMenos = 0;
+        activadorMenos = 0;
+        contadorValores++;
+        numeroAnterior = 0;
+      }
+      activadorNumeros = 0;
       
     }
   }
@@ -363,7 +349,50 @@ void CALC_solucionarOperacion() {
   for (byte i = 0; i < 5; i++) {
     Serial.print("numero =  ");
     Serial.println(valorNumerico[i]);
+    Serial.println(posicionSignos[i]);
   }
+
+
+  for (byte i = 0; i < contadorValores+1; i++) {
+    if (posicionSignos[i] == POTENCIA) {
+      valorNumerico[i] = pow(valorNumerico[i], valorNumerico[i+1]);
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+  }
+
+
+
+
+  // M U L T I P L I C A C I O N       Y       D I V I S O R
+  for (byte i = 0; i < contadorValores+1; i++) {
+    if (posicionSignos[i] == MULTIPLICACION) {
+      valorNumerico[i] = valorNumerico[i] * valorNumerico[i+1];
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+    if (posicionSignos[i] == DIVISION) {
+      valorNumerico[i] = valorNumerico[i] / valorNumerico[i+1];
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        Serial.println(a+1);
+        Serial.println(valorNumerico[a+1]);
+        valorNumerico[a] = valorNumerico[a+1];
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+  }
+
+
 
   resultado = 0;
   for (int i = 0; i <= contadorValores; i++) {
