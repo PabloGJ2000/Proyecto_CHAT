@@ -74,7 +74,7 @@ byte modo = 1;                                  //variable donde almacenamos el 
 char botones;                                   //variable donde almacenamos el último botón leido.
 //byte contadorNumeros = 0;                       //variable donde almacenamos la posición de cada número, es decir, en la operación 10+21, el número 10 está la posición 1 y el 21 está en la posición 2.
 
-String stringOperacion = "(0+8)+(9+5)";
+String stringOperacion = "5+(7-(9+8))";
 //String stringOperacion = "((4+7)+5)+(9+8)";
 //String stringOperacion = "9+8+5";
 //String stringOperacion = "(5+7)+(9+8)";
@@ -160,10 +160,6 @@ void CALC_deBotonesAString() {
   //Serial.println(stringOperacion);
 }
 
-
-
-
-
 //boolean activadorMaximoContadorParentesis = 0;
 
 
@@ -183,15 +179,6 @@ byte contadorParentesis = 0;
 
 const byte TAMANO_SUB_OPERACION = 2;
 String subOperacion[TAMANO_SUB_OPERACION];
-//byte contadorSubOperacion = 0;
-
-//boolean activadorSustituirParentesis = 0;
-//boolean comprobadorParentesis = 0;
-
-//byte pruebaInicio;
-//byte pruebaFinal;
-
-//boolean activadorPrueba = 0;
 
 boolean activadorTEST = 1;
 
@@ -331,28 +318,49 @@ void CALC_solucionarOperacion() {
   byte contadorValores = 0;
   const byte TAMANOVALORES = 20;
   float valorNumerico[TAMANOVALORES] = {0};
-  boolean activadorMenos = 0;
-  
+  bool activadorMenos = 0;
+  byte contadorActivadorMenos = 0;
+  bool activadorNumeros = 0;
+
   for (byte i = 0; i < longitudOperacion; i++) {
     char caracter = subOperacion[1].charAt(i);
     if ((caracter >= 48) && (caracter <= 57)) {
       numeroActual = caracter - 48 + numeroAnterior * 10;
-      if (activadorMenos == 1) {
-        //numeroActual = 0 - numeroActual;
-      }
       numeroAnterior = numeroActual;
-      
+
       valorNumerico[contadorValores] = numeroActual;
+
+      if (activadorMenos == 1) {
+        valorNumerico[contadorValores] = valorNumerico[contadorValores] * -1;
+      }
+      activadorNumeros = 1;
     }
-    else if (caracter == '-') {
-      activadorMenos = 1;
-    }
-    else {
-      numeroAnterior = 0;
-      contadorValores++;
+   
+    if ((caracter < 48) or (caracter > 57)) {
+      if (activadorNumeros == 1) {
+        contadorActivadorMenos = 0;
+        activadorMenos = 0;
+        contadorValores++;
+        numeroAnterior = 0;
+      }
+      activadorNumeros = 0;
+      if (caracter == '-') {
+        contadorActivadorMenos++;
+        if ((contadorActivadorMenos % 2) == 1) {
+          activadorMenos = 1;
+        }
+        else {
+          activadorMenos = 0;
+        }
+      }
+
+
+      
+      
     }
   }
-  for (byte i = 0; i < 10; i++) {
+
+  for (byte i = 0; i < 5; i++) {
     Serial.print("numero =  ");
     Serial.println(valorNumerico[i]);
   }
@@ -366,14 +374,12 @@ void CALC_solucionarOperacion() {
 }
 
 
-
-
-// Convierte un float en una cadena.
-// n -> número a convertir.
-// l -> longitud total de la cadena, por defecto 8.
-// d -> decimales, por defecto 2.
-// z -> si se desea rellenar con ceros a la izquierda, por defecto true.
 String floatToString( float n, int l, int d, boolean z) {
+  // Convierte un float en una cadena.
+  // n -> número a convertir.
+  // l -> longitud total de la cadena, por defecto 8.
+  // d -> decimales, por defecto 2.
+  // z -> si se desea rellenar con ceros a la izquierda, por defecto true.
   char c[l + 1];
   String s;
 
@@ -384,12 +390,13 @@ String floatToString( float n, int l, int d, boolean z) {
     s.replace(" ", "0");
   }
 
+  int posMenos = s.indexOf('-');
+  
+  if (posMenos > 0) {
+    s = s.substring(posMenos);
+  }
   return s;
 }
-
-
-
-
 
 void CALC_sustituirParentesis() {
   Serial.println("[INICIO]CALC_sustituirParentesis");
@@ -398,19 +405,14 @@ void CALC_sustituirParentesis() {
   String posteriorResultado;
   anteriorResultado = subOperacion[0].substring(0, generalInicioParentesis[2]);
   posteriorResultado = subOperacion[0].substring(generalFinalParentesis[2] + 1);
+  Serial.println(resultado);
+  Serial.println(floatToString(resultado, 5, 0, 1));
   subOperacion[0] = anteriorResultado + floatToString(resultado, 5, 0, 1) + posteriorResultado;
   subOperacion[1] = subOperacion[0];
   Serial.println(subOperacion[0]);
   Serial.println("[FINAL]CALC_sustituirParentesis");
   return;
 }
-
-void CALC_variablesParentesisACero() {
-
-}
-
-
-
 
 void parpadeoLCD(byte x) {
   lcd.setCursor(x, 0);
