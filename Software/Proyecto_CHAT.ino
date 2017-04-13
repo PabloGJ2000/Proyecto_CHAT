@@ -74,7 +74,7 @@ byte modo = 1;                                  //variable donde almacenamos el 
 char botones;                                   //variable donde almacenamos el último botón leido.
 //byte contadorNumeros = 0;                       //variable donde almacenamos la posición de cada número, es decir, en la operación 10+21, el número 10 está la posición 1 y el 21 está en la posición 2.
 
-String stringOperacion = "(5+1)e5";
+String stringOperacion = "250.59";
 //String stringOperacion = "((4+7)+5)+(9+8)";
 //String stringOperacion = "9+8+5";
 //String stringOperacion = "(5+7)+(9+8)";
@@ -299,6 +299,8 @@ void CALC_solucionarOperacion() {
   byte contadorActivadorMenos = 0;
   bool activadorNumeros = 0;
 
+  bool activadorDecimales = 0;
+  byte contadorDecimales = 0;
   //SIGNOS Y OPERACION
   const char MULTIPLICACION = 'x';
   const char DIVISION = '/';
@@ -318,10 +320,29 @@ void CALC_solucionarOperacion() {
         valorNumerico[contadorValores] = valorNumerico[contadorValores] * -1;
       }
       activadorNumeros = 1;
+      if (activadorDecimales == 1) {
+        contadorDecimales++;
+        valorNumerico[contadorValores] = valorNumerico[contadorValores] / (pow(10, contadorDecimales ));
+      }
     }
-   
+    
     if ((caracter < 48) or (caracter > 57)) {
-      
+      // SOLUCIONAR PROBLEMA PARENTESIS
+      if (activadorDecimales == 1) {
+        Serial.println("grr");
+        Serial.println(valorNumerico[contadorActivadorMenos-1]);
+        valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] + valorNumerico[contadorValores];
+        contadorValores--;
+      }
+      if (caracter == '.') {
+        activadorDecimales = 1;
+      }
+      else {
+        Serial.println("htht");
+        activadorDecimales = 0;
+      }
+
+
       if (caracter == '-') {
         contadorActivadorMenos++;
         if ((contadorActivadorMenos % 2) == 1) {
@@ -353,6 +374,8 @@ void CALC_solucionarOperacion() {
   }
 
 
+
+  // P O T E N C I A
   for (byte i = 0; i < contadorValores+1; i++) {
     if (posicionSignos[i] == POTENCIA) {
       valorNumerico[i] = pow(valorNumerico[i], valorNumerico[i+1]);
