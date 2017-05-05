@@ -74,7 +74,7 @@ byte modo = 1;                                  //variable donde almacenamos el 
 char botones;                                   //variable donde almacenamos el último botón leido.
 //byte contadorNumeros = 0;                       //variable donde almacenamos la posición de cada número, es decir, en la operación 10+21, el número 10 está la posición 1 y el 21 está en la posición 2.
 
-String stringOperacion = "250.59";
+String stringOperacion = "r(5x2.5e3)";
 //String stringOperacion = "((4+7)+5)+(9+8)";
 //String stringOperacion = "9+8+5";
 //String stringOperacion = "(5+7)+(9+8)";
@@ -171,22 +171,16 @@ void CALC_distribucionBotones() {
 
 void CALC_solucionarTotalOperacion() {
   Serial.println("[INICIO]CALC_solucionarTotalOperacion");
-  //Serial.println(subOperacion[0]);
   subOperacion[1] = subOperacion[0];
   while (activadorTEST == 1) {
     if (CALC_detectarParentesis(subOperacion[1]) == 1) {
-      //Serial.println ("ENTRA");
       while ((CALC_detectarParentesis(subOperacion[1])) == 1) {
         CALC_separarParentesis(subOperacion[1]);
       }
       if (CALC_detectarParentesis(subOperacion[1]) == 0) {
-        //Serial.println("R");
         CALC_solucionarOperacion();
         CALC_sustituirParentesis();
-        //Serial.println(CALC_detectarParentesis(subOperacion[0]));
-        //Serial.println(subOperacion[1]);
         if (CALC_detectarParentesis(subOperacion[0]) == 0) {
-          Serial.println("////");
           CALC_solucionarOperacion();
           activadorTEST = 0;
         }
@@ -208,7 +202,6 @@ void CALC_solucionarTotalOperacion() {
     else {
       CALC_solucionarOperacion();
       activadorTEST = 0;
-      Serial.println("NO ENTRA");
     }
   }
 
@@ -220,17 +213,13 @@ boolean CALC_detectarParentesis(String operacion) {
   Serial.println("CALC_detectarParentesis");
   Serial.println(operacion);
   byte longitudOperacion = operacion.length();
-  //Serial.println("[INICIO]CALC_detectarParentesis");
-  //Serial.println(operacion);
 
   for (byte i = 0; i < longitudOperacion; i++) {
     char caracter = operacion.charAt(i);
     if ((caracter == '(') or (caracter == ')')) {
-      //Serial.println("[FINAL]CALC_detectarParentesis[1]");
       return 1;
     }
   }
-  //Serial.println("[FINAL]CALC_detectarParentesis[0]");
   return 0;
 }
 
@@ -267,7 +256,7 @@ void CALC_separarParentesis(String operacion) {
       generalFinalParentesis[contadorInicioFinalParentesis] = i;
       activadorInicioParentesis = 0;
       activadorParentesis = 0;
-      Serial.println("generalInicioParentesis[0]");
+      /*Serial.println("generalInicioParentesis[0]");
       Serial.println(generalInicioParentesis[0]);
       Serial.println(generalInicioParentesis[1]);
       Serial.println(generalInicioParentesis[2]);
@@ -275,7 +264,7 @@ void CALC_separarParentesis(String operacion) {
       Serial.println(generalFinalParentesis[0]);
       Serial.println(generalFinalParentesis[1]);
       Serial.println(generalFinalParentesis[2]);
-      
+      */
       subOperacion[1] =  operacion.substring(generalInicioParentesis[contadorInicioFinalParentesis], generalFinalParentesis[contadorInicioFinalParentesis]);
       Serial.println(subOperacion[1]);
       contadorInicioFinalParentesis = 1;
@@ -287,6 +276,7 @@ void CALC_separarParentesis(String operacion) {
   Serial.println("[FINAL]CALC_separarParentesis");
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void CALC_solucionarOperacion() {
   byte longitudOperacion = subOperacion[1].length();
   float numeroActual = 0;
@@ -305,11 +295,14 @@ void CALC_solucionarOperacion() {
   const char MULTIPLICACION = 'x';
   const char DIVISION = '/';
   const char POTENCIA = 'e';
+  const char RAIZ_CUADRADA = 'r';
 
 
 
   for (byte i = 0; i < longitudOperacion; i++) {
     char caracter = subOperacion[1].charAt(i);
+    //Serial.println("Caracter");
+    //Serial.println(caracter);
     if ((caracter >= 48) && (caracter <= 57)) {
       numeroActual = caracter - 48 + numeroAnterior * 10;
       numeroAnterior = numeroActual;
@@ -327,10 +320,7 @@ void CALC_solucionarOperacion() {
     }
     
     if ((caracter < 48) or (caracter > 57)) {
-      // SOLUCIONAR PROBLEMA PARENTESIS
       if (activadorDecimales == 1) {
-        Serial.println("grr");
-        Serial.println(valorNumerico[contadorActivadorMenos-1]);
         valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] + valorNumerico[contadorValores];
         contadorValores--;
       }
@@ -338,7 +328,7 @@ void CALC_solucionarOperacion() {
         activadorDecimales = 1;
       }
       else {
-        Serial.println("htht");
+        contadorDecimales = 0;
         activadorDecimales = 0;
       }
 
@@ -352,9 +342,13 @@ void CALC_solucionarOperacion() {
           activadorMenos = 0;
         }
       }
-      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA)) {
+      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA)) {
         posicionSignos[contadorValores] = caracter;
+        if (caracter == RAIZ_CUADRADA) {
+          contadorValores++;
+        }
       }
+
 
       if (activadorNumeros == 1) {
         contadorActivadorMenos = 0;
@@ -367,16 +361,28 @@ void CALC_solucionarOperacion() {
     }
   }
 
+  if (activadorDecimales == 1) {
+    valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] + valorNumerico[contadorValores];
+    valorNumerico[contadorValores] = 0;
+    contadorValores--;
+  }
+
+
   for (byte i = 0; i < 5; i++) {
     Serial.print("numero =  ");
     Serial.println(valorNumerico[i]);
     Serial.println(posicionSignos[i]);
   }
+  
+  
+  contadorValores++; //para las raices que tienen el signo delante del número
 
-
-
-  // P O T E N C I A
+  // P O T E N C I A      Y      R A I Z
   for (byte i = 0; i < contadorValores+1; i++) {
+    Serial.println("PYR");
+    Serial.println(i);
+    Serial.println(posicionSignos[i]);
+    Serial.println(posicionSignos[i+1]);
     if (posicionSignos[i] == POTENCIA) {
       valorNumerico[i] = pow(valorNumerico[i], valorNumerico[i+1]);
       posicionSignos[i] = 0;
@@ -386,7 +392,38 @@ void CALC_solucionarOperacion() {
       }
       i--;
     }
+
+    if (posicionSignos[i] == RAIZ_CUADRADA) {
+      Serial.println("AKUNAAAAAA");
+      for (int a = i; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+      }
+      for (byte i = 0; i < 5; i++) {
+    Serial.print("numero =  ");
+    Serial.println(valorNumerico[i]);
+    Serial.println(posicionSignos[i]);
   }
+      Serial.println("HEUEUEU");
+      Serial.println(i);
+      Serial.println(posicionSignos[i]);
+      Serial.println(valorNumerico[i]);
+      valorNumerico[i] = pow(valorNumerico[i], 0.5);
+      Serial.println("HEHCO");
+      Serial.println(valorNumerico[i]);
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+  }
+
+ for (byte i = 0; i < 5; i++) {
+    Serial.print("[fd]numero =  ");
+    Serial.println(valorNumerico[i]);
+    Serial.println(posicionSignos[i]);
+  }
+
 
 
 
@@ -406,8 +443,6 @@ void CALC_solucionarOperacion() {
       valorNumerico[i] = valorNumerico[i] / valorNumerico[i+1];
       posicionSignos[i] = 0;
       for (int a = i+1; a <= contadorValores+1; a++) {
-        Serial.println(a+1);
-        Serial.println(valorNumerico[a+1]);
         valorNumerico[a] = valorNumerico[a+1];
         posicionSignos[a-1] = posicionSignos[a];
       }
@@ -421,6 +456,7 @@ void CALC_solucionarOperacion() {
   for (int i = 0; i <= contadorValores; i++) {
     resultado += valorNumerico[i];
   }
+  Serial.println("RESULTADO");
   Serial.println(resultado);
   Serial.println("[FINAL]CALC_solucionarOperacion");
 }
@@ -457,9 +493,7 @@ void CALC_sustituirParentesis() {
   String posteriorResultado;
   anteriorResultado = subOperacion[0].substring(0, generalInicioParentesis[2]);
   posteriorResultado = subOperacion[0].substring(generalFinalParentesis[2] + 1);
-  Serial.println(resultado);
-  Serial.println(floatToString(resultado, 5, 0, 1));
-  subOperacion[0] = anteriorResultado + floatToString(resultado, 5, 0, 1) + posteriorResultado;
+  subOperacion[0] = anteriorResultado + floatToString(resultado, 5, 4, 1) + posteriorResultado;
   subOperacion[1] = subOperacion[0];
   Serial.println(subOperacion[0]);
   Serial.println("[FINAL]CALC_sustituirParentesis");
