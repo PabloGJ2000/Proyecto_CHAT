@@ -74,7 +74,7 @@ byte modo = 1;                                  //variable donde almacenamos el 
 char botones;                                   //variable donde almacenamos el último botón leido.
 //byte contadorNumeros = 0;                       //variable donde almacenamos la posición de cada número, es decir, en la operación 10+21, el número 10 está la posición 1 y el 21 está en la posición 2.
 
-String stringOperacion = "r(5x2.5e3)";
+String stringOperacion = "(2.1+1)R(r100)";
 //String stringOperacion = "((4+7)+5)+(9+8)";
 //String stringOperacion = "9+8+5";
 //String stringOperacion = "(5+7)+(9+8)";
@@ -296,6 +296,7 @@ void CALC_solucionarOperacion() {
   const char DIVISION = '/';
   const char POTENCIA = 'e';
   const char RAIZ_CUADRADA = 'r';
+  const char RAIZ_X = 'R';
 
 
 
@@ -342,7 +343,7 @@ void CALC_solucionarOperacion() {
           activadorMenos = 0;
         }
       }
-      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA)) {
+      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA) or (caracter == RAIZ_X)) {
         posicionSignos[contadorValores] = caracter;
         if (caracter == RAIZ_CUADRADA) {
           contadorValores++;
@@ -394,24 +395,26 @@ void CALC_solucionarOperacion() {
     }
 
     if (posicionSignos[i] == RAIZ_CUADRADA) {
-      Serial.println("AKUNAAAAAA");
       for (int a = i; a <= contadorValores+1; a++) {
         valorNumerico[a] = valorNumerico[a+1];
       }
-      for (byte i = 0; i < 5; i++) {
-    Serial.print("numero =  ");
-    Serial.println(valorNumerico[i]);
-    Serial.println(posicionSignos[i]);
-  }
-      Serial.println("HEUEUEU");
-      Serial.println(i);
-      Serial.println(posicionSignos[i]);
-      Serial.println(valorNumerico[i]);
       valorNumerico[i] = pow(valorNumerico[i], 0.5);
-      Serial.println("HEHCO");
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+
+    if (posicionSignos[i] == RAIZ_X) {
+      Serial.println("AKUNAAAA");
+      Serial.println(valorNumerico[i]);
+      valorNumerico[i] = pow(valorNumerico[i+1], 1/valorNumerico[i]);
+      Serial.println("FIN");
       Serial.println(valorNumerico[i]);
       posicionSignos[i] = 0;
       for (int a = i+1; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
         posicionSignos[a-1] = posicionSignos[a];
       }
       i--;
