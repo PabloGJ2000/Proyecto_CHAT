@@ -74,7 +74,7 @@ byte modo = 1;                                  //variable donde almacenamos el 
 char botones;                                   //variable donde almacenamos el último botón leido.
 //byte contadorNumeros = 0;                       //variable donde almacenamos la posición de cada número, es decir, en la operación 10+21, el número 10 está la posición 1 y el 21 está en la posición 2.
 
-String stringOperacion = "(2.1+1)R(r100)";
+String stringOperacion = "s60xc100xt20";
 //String stringOperacion = "((4+7)+5)+(9+8)";
 //String stringOperacion = "9+8+5";
 //String stringOperacion = "(5+7)+(9+8)";
@@ -109,6 +109,10 @@ int porcentaje_brillo = 100;                    //variable donde almacenar el po
 float boton_A;                                  //variable donde podemos almacenar el número de ohmios medidos o cualquier otra cosa pulsando el bóton 'A'.
 float boton_B;                                  //variable donde podemos almacenar el número de ohmios medidos o cualquier otra cosa pulsando el bóton 'B'.
 float boton_C;                                  //variable donde podemos almacenar el número de ohmios medidos o cualquier otra cosa pulsando el bóton 'C'.
+
+
+boolean activadorRadianes = 0;
+
 
 //FUNCIÓN PARA LEER LOS BOTONES.
 void leerBotones() {
@@ -297,6 +301,11 @@ void CALC_solucionarOperacion() {
   const char POTENCIA = 'e';
   const char RAIZ_CUADRADA = 'r';
   const char RAIZ_X = 'R';
+  const char LOGARITMO_BASE_10 = 'L';
+  const char LOGARITMO_NEPERIANO = 'l';
+  const char SEN = 's';
+  const char COS = 'c';
+  const char TAN = 't';
 
 
 
@@ -343,9 +352,9 @@ void CALC_solucionarOperacion() {
           activadorMenos = 0;
         }
       }
-      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA) or (caracter == RAIZ_X)) {
+      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA) or (caracter == RAIZ_X) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN)) {
         posicionSignos[contadorValores] = caracter;
-        if (caracter == RAIZ_CUADRADA) {
+        if ((caracter == RAIZ_CUADRADA) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN)) {
           contadorValores++;
         }
       }
@@ -369,6 +378,7 @@ void CALC_solucionarOperacion() {
   }
 
 
+
   for (byte i = 0; i < 5; i++) {
     Serial.print("numero =  ");
     Serial.println(valorNumerico[i]);
@@ -378,12 +388,93 @@ void CALC_solucionarOperacion() {
   
   contadorValores++; //para las raices que tienen el signo delante del número
 
+
+  // T R I G O N O M E T R I A
+  for (byte i = 0; i < contadorValores+1; i++) {
+    if (posicionSignos[i] == SEN) {
+      for (int a = i; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+      }
+      if (activadorRadianes == 1) {
+        valorNumerico[i] = sin(valorNumerico[i]);
+      }
+      else {
+        valorNumerico[i] = sin(deRadianesAGrados(valorNumerico[i]));
+      }
+      
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+    if (posicionSignos[i] == COS) {
+      for (int a = i; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+      }
+      if (activadorRadianes == 1) {
+        valorNumerico[i] = cos(valorNumerico[i]);
+      }
+      else {
+        valorNumerico[i] = cos(deRadianesAGrados(valorNumerico[i]));
+      }
+      
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+    if (posicionSignos[i] == TAN) {
+      for (int a = i; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+      }
+      if (activadorRadianes == 1) {
+        valorNumerico[i] = tan(valorNumerico[i]);
+      }
+      else {
+        valorNumerico[i] = tan(deRadianesAGrados(valorNumerico[i]));
+      }
+      
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+  }
+
+
+  // L O G A R I T M O
+  for (byte i = 0; i < contadorValores+1; i++) {
+    if (posicionSignos[i] == LOGARITMO_BASE_10) {
+      for (int a = i; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+      }
+      valorNumerico[i] = log10(valorNumerico[i]);
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+
+    if (posicionSignos[i] == LOGARITMO_NEPERIANO) {
+      for (int a = i; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+      }
+      valorNumerico[i] = log(valorNumerico[i]);
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+  }
+
   // P O T E N C I A      Y      R A I Z
   for (byte i = 0; i < contadorValores+1; i++) {
-    Serial.println("PYR");
-    Serial.println(i);
-    Serial.println(posicionSignos[i]);
-    Serial.println(posicionSignos[i+1]);
+
     if (posicionSignos[i] == POTENCIA) {
       valorNumerico[i] = pow(valorNumerico[i], valorNumerico[i+1]);
       posicionSignos[i] = 0;
@@ -407,11 +498,7 @@ void CALC_solucionarOperacion() {
     }
 
     if (posicionSignos[i] == RAIZ_X) {
-      Serial.println("AKUNAAAA");
-      Serial.println(valorNumerico[i]);
       valorNumerico[i] = pow(valorNumerico[i+1], 1/valorNumerico[i]);
-      Serial.println("FIN");
-      Serial.println(valorNumerico[i]);
       posicionSignos[i] = 0;
       for (int a = i+1; a <= contadorValores+1; a++) {
         valorNumerico[a] = valorNumerico[a+1];
