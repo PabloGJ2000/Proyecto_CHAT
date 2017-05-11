@@ -1,7 +1,10 @@
 /* PROYECTO CHAT
+    Hecho por: Pablo García Jaén - https://twitter.com/PabloGarciaJaen -
 
-    Proyecto CHAT by Pablo García Jaén (https://twitter.com/PabloGarciaJaen)
-    is licensed under
+    **Última modificación: 07/05/2017
+    **Última modificación hecha por: Pablo García Jaén
+
+    Proyecto CHAT is licensed under
     a Creative Commons Reconocimiento-Compartir Igual 4.0 Internacional License.
     Puede hallar permisos más allá de los concedidos con esta licencia en
     https://moaisenergy.com/acerca-de/
@@ -18,7 +21,7 @@
 LiquidCrystal_I2C lcd (0x3F, 16, 2);              //declaramos la dirección del I2C de la pantalla (0x3F) y las dimensiones de la pantalla (16,2)
 
 
-/* ADVERTENCIA TECLADO
+/* INFORMACIÓN SOBRE EL TECLADO
 
    El teclado está formado por 5 columnas y 9 filas y está dividido en 3 partes iguales.
    Todas las partes tienen 5 columnas (comunes para las 3 partes) pero solo tienen 3 filas.
@@ -74,7 +77,7 @@ byte modo = 1;                                  //variable donde almacenamos el 
 char botones;                                   //variable donde almacenamos el último botón leido.
 //byte contadorNumeros = 0;                       //variable donde almacenamos la posición de cada número, es decir, en la operación 10+21, el número 10 está la posición 1 y el 21 está en la posición 2.
 
-String stringOperacion = "s60xc100xt20";
+String stringOperacion = "-2.51x((-1.11-3.67)x-1)";
 //String stringOperacion = "((4+7)+5)+(9+8)";
 //String stringOperacion = "9+8+5";
 //String stringOperacion = "(5+7)+(9+8)";
@@ -152,8 +155,8 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
 //VARIABLES PARA PODER RESOLVER LOS PARENTESIS
 byte generalInicioParentesis[3] = {0};           //variable donde guardaremos la posicion del primer parentesis de inicio y el último. EXPLICACION: el paréntesis de inicio es: '('. Por ejemplo en la operacion 5*(4*(6+7)) el primer parentesis inicio tiene la posicion 2 y el último 5 (empieza a contar desde el 0)
 byte generalFinalParentesis[3] = {0};            //variable donde haremos lo mismo que en la anterior pero en vez de con el paréntesis inicio lo haremos con el paréntesis final ')'. 
-boolean contadorInicioFinalParentesis = 0;       //
-boolean activadorGeneralFinalParentesis = 0;
+boolean contadorInicioFinalParentesis = 0;       //variable donde guardaremos el número de pares de paréntesis. EXPLICACIÓN: en la operación (7*(2+8))/9  hay un total de 2 pares de paréntesis
+boolean activadorGeneralFinalParentesis = 0;     //variable donde almacenaremos un 1 cuando nos encontremos el primer ')'. De esta forma en la operación ((2+8)*3)/(7-2), cuando nos encontremos el primer ')', sabremos que no tendremos que sumar más números al contador de paréntesis (solo nos quedará restar cada vez que encontremos ')') pues la operación que nos interesa sacar es ((2+8)*3) para resorverla.
 boolean activadorInicioParentesis = 0;
 boolean activadorParentesis = 0;
 byte contadorParentesis = 0;
@@ -260,15 +263,6 @@ void CALC_separarParentesis(String operacion) {
       generalFinalParentesis[contadorInicioFinalParentesis] = i;
       activadorInicioParentesis = 0;
       activadorParentesis = 0;
-      /*Serial.println("generalInicioParentesis[0]");
-      Serial.println(generalInicioParentesis[0]);
-      Serial.println(generalInicioParentesis[1]);
-      Serial.println(generalInicioParentesis[2]);
-      Serial.println("generalFinalParentesis[0]");
-      Serial.println(generalFinalParentesis[0]);
-      Serial.println(generalFinalParentesis[1]);
-      Serial.println(generalFinalParentesis[2]);
-      */
       subOperacion[1] =  operacion.substring(generalInicioParentesis[contadorInicioFinalParentesis], generalFinalParentesis[contadorInicioFinalParentesis]);
       Serial.println(subOperacion[1]);
       contadorInicioFinalParentesis = 1;
@@ -292,7 +286,6 @@ void CALC_solucionarOperacion() {
   bool activadorMenos = 0;
   byte contadorActivadorMenos = 0;
   bool activadorNumeros = 0;
-
   bool activadorDecimales = 0;
   byte contadorDecimales = 0;
   //SIGNOS Y OPERACION
@@ -309,7 +302,7 @@ void CALC_solucionarOperacion() {
 
 
 
-  for (byte i = 0; i < longitudOperacion; i++) {
+  for (byte i = 0; i <= longitudOperacion; i++) {
     char caracter = subOperacion[1].charAt(i);
     //Serial.println("Caracter");
     //Serial.println(caracter);
@@ -319,20 +312,39 @@ void CALC_solucionarOperacion() {
 
       valorNumerico[contadorValores] = numeroActual;
 
-      if (activadorMenos == 1) {
-        valorNumerico[contadorValores] = valorNumerico[contadorValores] * -1;
-      }
       activadorNumeros = 1;
       if (activadorDecimales == 1) {
         contadorDecimales++;
         valorNumerico[contadorValores] = valorNumerico[contadorValores] / (pow(10, contadorDecimales ));
       }
+      if (activadorMenos == 1) {
+        valorNumerico[contadorValores] = valorNumerico[contadorValores] * -1;
+        Serial.println("MENOS");
+        Serial.println(valorNumerico[contadorValores]);
+      }
     }
     
     if ((caracter < 48) or (caracter > 57)) {
       if (activadorDecimales == 1) {
-        valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] + valorNumerico[contadorValores];
+        Serial.println("HOLASDDD");
+        Serial.println(valorNumerico[contadorValores-0]);
+        Serial.println(valorNumerico[contadorValores-1]);
+        Serial.println(valorNumerico[contadorValores-2]);
+        if(valorNumerico[contadorValores-1] < 0) {
+          Serial.println("GASDF");
+          Serial.println(contadorValores-1);
+          valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] * -1;
+          valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] + valorNumerico[contadorValores];
+          valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] * -1;
+        }
+        else {
+          Serial.println("FASFS");
+          Serial.println(contadorValores-1);
+          valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] + valorNumerico[contadorValores];
+        }
+        valorNumerico[contadorValores] = 0;
         contadorValores--;
+        Serial.println(valorNumerico[contadorValores]);
       }
       if (caracter == '.') {
         activadorDecimales = 1;
@@ -342,16 +354,7 @@ void CALC_solucionarOperacion() {
         activadorDecimales = 0;
       }
 
-
-      if (caracter == '-') {
-        contadorActivadorMenos++;
-        if ((contadorActivadorMenos % 2) == 1) {
-          activadorMenos = 1;
-        }
-        else {
-          activadorMenos = 0;
-        }
-      }
+      
       if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA) or (caracter == RAIZ_X) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN)) {
         posicionSignos[contadorValores] = caracter;
         if ((caracter == RAIZ_CUADRADA) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN)) {
@@ -367,7 +370,16 @@ void CALC_solucionarOperacion() {
         numeroAnterior = 0;
       }
       activadorNumeros = 0;
-      
+
+      if (caracter == '-') {
+        contadorActivadorMenos++;
+        if ((contadorActivadorMenos % 2) == 1) {
+          activadorMenos = 1;
+        }
+        else {
+          activadorMenos = 0;
+        }
+      }
     }
   }
 
