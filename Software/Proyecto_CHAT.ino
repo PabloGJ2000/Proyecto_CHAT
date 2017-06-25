@@ -46,7 +46,7 @@ const byte ROWS1 = 3;                   //número de filas de 1/3 del teclado.
 const byte COLS1 = 5;                   //número de columnas de 1/3 del teclado.
 char keys1[ROWS1][COLS1] = {            //mapa de 1/3 del teclado. Concretamente del teclado del medio.
   {'e', 'r', 'R', '(', ')'},            // | potencia | 2RAIZ | xRAIZ |  (  |  )  |
-  {'A', 'B', 'C', 'P', '_'},            // |     A    |   B   |   C   |  PI |  e  |
+  {'A', 'B', 'C', 'P', 'n'},            // |     A    |   B   |   C   |  PI |  e  |
   {'7', '8', '9', 'd', 'a'}             // |     7    |   8   |   9   | DEL |  AC |
 };
 byte rowPins1[ROWS1] = {5, 6, 7};         //pines del extensor de pines (MCP23008) donde van las filas.
@@ -131,6 +131,9 @@ boolean activadorRadianes = 0;
   const char COS = 'c';
   const char TAN = 't';
 
+  const char NUMERO_PI = 'P';
+  const char NUMERO_e = 'n';
+
   const char ARRIBA = 'k';
   const char ABAJO = 'p';
   const char DERECHA = 'v';
@@ -141,7 +144,7 @@ boolean activadorRadianes = 0;
   const char BORRAR_AC = 'a';
 
 
-byte RAIZ_CUADRADA_CARACTER[8] = {                  
+byte RAIZ_CARACTER[8] = {                  
   0b00111,
   0b00100,
   0b00100,
@@ -149,6 +152,39 @@ byte RAIZ_CUADRADA_CARACTER[8] = {
   0b10100, 
   0b01100,   
   0b00100,   
+  0b00000   
+};
+
+byte RAIZ_DE_X_CARACTER[8] = {                  
+  0b11001,
+  0b00110,
+  0b01100,
+  0b10011,   
+  0b00000, 
+  0b00000,   
+  0b00000,   
+  0b00000   
+};
+
+byte NUMERO_PI_CARACTER[8] = {                  
+  0b00000,
+  0b11111,
+  0b01010,
+  0b01010,   
+  0b01010, 
+  0b01011,   
+  0b10010,   
+  0b00000   
+};
+
+byte NUMERO_E_CARACTER[8] = {         
+  0b00000,
+  0b00110,
+  0b01001,
+  0b11010,
+  0b11100,   
+  0b11001, 
+  0b01110,     
   0b00000   
 };
 
@@ -202,13 +238,18 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     xparpadeo++;
     xparpadeoLCD++;
   }
-  else if ((botones == SUMA) or (botones == RESTA) or (botones == MULTIPLICACION) or (botones == DIVISION) or (botones == RAIZ_CUADRADA) or (botones == PARENTESIS_ABRIR) or (botones == PARENTESIS_CERRAR)) {
+
+  else if ((botones == SUMA) or (botones == RESTA) or (botones == MULTIPLICACION) or (botones == DIVISION) or (botones == RAIZ_CUADRADA) or (botones == POTENCIA) or (botones == PARENTESIS_ABRIR) or (botones == PARENTESIS_CERRAR) or (botones == '.') or (botones == NUMERO_PI) or (botones == NUMERO_e)) {
     xparpadeo++;
     xparpadeoLCD++;
   }
-  else if ((botones == SEN) or (botones == COS) or (botones == TAN)) {
+  else if ((botones == SEN) or (botones == COS) or (botones == TAN) or (botones == LOGARITMO_BASE_10)) {
     xparpadeo++;
     xparpadeoLCD += 3;
+  }
+  else if ((botones == LOGARITMO_NEPERIANO) or (botones == RAIZ_X)) {
+    xparpadeo++;
+    xparpadeoLCD += 2;
   }
   else if (botones == BORRAR_AC) {
     if (xparpadeo == stringOperacion.length()-1) {
@@ -217,6 +258,10 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
       if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN)) { //error al borrar seno, coseno, tangente
         xparpadeoLCD -=3;
       }
+      else if ((stringOperacion.charAt(xparpadeo-1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo-1) == RAIZ_X)) {
+        xparpadeoLCD -=2;
+      }
+
       else {
         xparpadeoLCD--;
       }
@@ -235,8 +280,11 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     lcd.setCursor(xparpadeoLCD, 0);
     lcd.print(" ");
     if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN)) { //error al borrar seno, coseno, tangente
-        xparpadeoLCD -=3;
-      }
+      xparpadeoLCD -=3;
+    }
+    else if ((stringOperacion.charAt(xparpadeo-1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo-1) == RAIZ_X)) {
+      xparpadeoLCD -=2;
+    }
     else {
       xparpadeoLCD--;
     }
@@ -398,6 +446,22 @@ void CALC_solucionarOperacion() {
     char caracter = subOperacion[1].charAt(i);
     //Serial.println("Caracter");
     //Serial.println(caracter);
+    if (caracter == NUMERO_PI) {
+      valorNumerico[contadorValores] = PI;
+      activadorNumeros = 1;
+      if (activadorMenos == 1) {
+        valorNumerico[contadorValores] = valorNumerico[contadorValores] * -1;
+      }
+    }
+
+    if (caracter == NUMERO_e) {
+      valorNumerico[contadorValores] = exp (1);
+      activadorNumeros = 1;
+      if (activadorMenos == 1) {
+        valorNumerico[contadorValores] = valorNumerico[contadorValores] * -1;
+      }
+    }
+
     if ((caracter >= 48) && (caracter <= 57)) {
       numeroActual = caracter - 48 + numeroAnterior * 10;
       numeroAnterior = numeroActual;
@@ -431,10 +495,12 @@ void CALC_solucionarOperacion() {
       if (caracter == '.') {
         activadorDecimales = 1;
       }
+
       else {
         contadorDecimales = 0;
         activadorDecimales = 0;
       }
+
       
       if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA) or (caracter == RAIZ_X) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN)) {
         posicionSignos[contadorValores] = caracter;
@@ -745,11 +811,23 @@ void CALC_escribirLCD() {
       case RAIZ_CUADRADA:
         stringOperacionVisual += "K";
       break;
+      case RAIZ_X:
+        stringOperacionVisual += "qK";
+      break;
+      case POTENCIA:
+        stringOperacionVisual += "^";
+      break;
       case '(':
         stringOperacionVisual += "(";
       break;
       case ')':
         stringOperacionVisual += ")";
+      break;
+      case NUMERO_PI:
+        stringOperacionVisual += "P";
+      break;
+      case NUMERO_e:
+        stringOperacionVisual += 'n';
       break;
 
     }
@@ -775,10 +853,18 @@ void CALC_escribirLCD() {
     if (stringOperacionVisualLCD.charAt(i) == 'K') {
       lcd.write(byte(0));
     }
-    if (stringOperacionVisualLCD.charAt(i) != 'K')  {
+    if (stringOperacionVisualLCD.charAt(i) == 'q') {
+      lcd.write(byte(1));
+    }
+    if (stringOperacionVisualLCD.charAt(i) == 'P') {
+      lcd.write(byte(2));
+    }
+    if (stringOperacionVisualLCD.charAt(i) == 'n') {
+      lcd.write(byte(3));
+    }
+    else if ((stringOperacionVisualLCD.charAt(i) != 'K') && (stringOperacionVisualLCD.charAt(i) != 'q') && (stringOperacionVisualLCD.charAt(i) != 'P') && (stringOperacionVisualLCD.charAt(i) != 'n')) {
       lcd.print(stringOperacionVisualLCD.charAt(i));
     }
-    
   }
   
   lcd.setCursor(stringOperacionVisualLCD.length()+1, 0);
@@ -828,7 +914,12 @@ void setup() {
 
   lcd.init();
   lcd.backlight();
-  lcd.createChar(0, RAIZ_CUADRADA_CARACTER);
+
+  lcd.createChar(0, RAIZ_CARACTER);
+  lcd.createChar(1, RAIZ_DE_X_CARACTER);
+  lcd.createChar(2, NUMERO_PI_CARACTER);
+  lcd.createChar(3, NUMERO_E_CARACTER);
+
   lcd.clear();
   lcd.setCursor(5, 1);
   lcd.print("MoaisEnergyDEF");
