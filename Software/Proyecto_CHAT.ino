@@ -127,20 +127,28 @@ boolean activadorRadianes = 0;
   const char RAIZ_X = 'R';
   const char LOGARITMO_BASE_10 = 'L';
   const char LOGARITMO_NEPERIANO = 'l';
+
   const char SEN = 's';
   const char COS = 'c';
   const char TAN = 't';
 
+  const char ARCOSENO = 'S';
+  const char ARCOCOSENO = 'F';
+  const char ARCOTANGENTE = 'T';
+
   const char NUMERO_PI = 'P';
   const char NUMERO_e = 'n';
+
+  const char PARENTESIS_ABRIR = '(';
+  const char PARENTESIS_CERRAR = ')';
 
   const char ARRIBA = 'k';
   const char ABAJO = 'p';
   const char DERECHA = 'v';
   const char IZQUIERDA = 'u';
 
-  const char PARENTESIS_ABRIR = '(';
-  const char PARENTESIS_CERRAR = ')';
+  const char SHIFT = 'f';
+
   const char BORRAR_AC = 'a';
 
 
@@ -188,6 +196,17 @@ byte NUMERO_E_CARACTER[8] = {
   0b00000   
 };
 
+byte ELEVADO_MENOS_UNO_CARACTER[8] = {
+  0b00011,
+  0b00001,
+  0b11101,
+  0b00001,
+  0b00001,   
+  0b00000, 
+  0b00000,     
+  0b00000  
+};
+
 //FUNCIÓN PARA LEER LOS BOTONES.
 void leerBotones() {
   char botonesA;                                //declaramos 1/3 del teclado
@@ -222,6 +241,7 @@ void GENERAL_distribucionBotones() {             //función por si uno de los bo
 
 byte xparpadeo = 0;
 byte xparpadeoLCD = 0;
+
 void CALC_deBotonesAString() {                   //función para guardar el caracter del botón pulsado (por ejemplo '2') en un string. De esta forma podremos borrar un carácter si nos confundimos
   String a = stringOperacion;
   String b = stringOperacion;
@@ -243,6 +263,10 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     xparpadeo++;
     xparpadeoLCD++;
   }
+  else if ((botones == ARCOSENO) or (botones == ARCOCOSENO) or (botones == ARCOTANGENTE)) {
+    xparpadeo++;
+    xparpadeoLCD += 5;
+  }
   else if ((botones == SEN) or (botones == COS) or (botones == TAN) or (botones == LOGARITMO_BASE_10)) {
     xparpadeo++;
     xparpadeoLCD += 3;
@@ -255,7 +279,10 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     if (xparpadeo == stringOperacion.length()-1) {
       lcd.setCursor(xparpadeoLCD, 0);
       lcd.print("   ");
-      if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN)) { //error al borrar seno, coseno, tangente
+      if ((stringOperacion.charAt(xparpadeo-1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOTANGENTE)) {
+        xparpadeoLCD -= 5;
+      }
+      else if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN)) { //error al borrar seno, coseno, tangente
         xparpadeoLCD -=3;
       }
       else if ((stringOperacion.charAt(xparpadeo-1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo-1) == RAIZ_X)) {
@@ -279,6 +306,9 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
   else if ((botones == IZQUIERDA) && (xparpadeo > 0))  {
     lcd.setCursor(xparpadeoLCD, 0);
     lcd.print(" ");
+    if ((stringOperacion.charAt(xparpadeo-1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOTANGENTE)) {
+      xparpadeoLCD -= 5;
+    }
     if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN)) { //error al borrar seno, coseno, tangente
       xparpadeoLCD -=3;
     }
@@ -291,8 +321,19 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     xparpadeo--;
   }
   else if ((botones == DERECHA) && (xparpadeo < stringOperacion.length())) {
+    if ((stringOperacion.charAt(xparpadeo) == ARCOSENO) or (stringOperacion.charAt(xparpadeo) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo) == ARCOTANGENTE)) {
+      xparpadeoLCD += 5;
+    }
+    if ((stringOperacion.charAt(xparpadeo) == COS) or (stringOperacion.charAt(xparpadeo) == SEN) or (stringOperacion.charAt(xparpadeo) == TAN)) { //error al borrar seno, coseno, tangente
+      xparpadeoLCD +=3;
+    }
+    else if ((stringOperacion.charAt(xparpadeo) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo) == RAIZ_X)) {
+      xparpadeoLCD +=2;
+    }
+    else {
+      xparpadeoLCD++;
+    }
     xparpadeo++;
-    xparpadeoLCD++;
   }
 }
 
@@ -310,6 +351,7 @@ String subOperacion[TAMANO_SUB_OPERACION];
 boolean activadorTEST = 1;
 
 boolean activadorxParpadeoFinal = 0;
+boolean activadorShift = 0;
 
 void CALC_distribucionBotones() {
   Serial.println(botones);
@@ -321,6 +363,25 @@ void CALC_distribucionBotones() {
 
   }
   if(activadorxParpadeoFinal == 0) {
+    if (botones == SHIFT) {
+      activadorShift = 1;
+    }
+    if (activadorShift == 1) {
+      switch (botones) {
+        case SEN:
+          botones = ARCOSENO;
+          activadorShift = 0;
+        break;
+        case COS:
+          botones = ARCOCOSENO;
+          activadorShift = 0;
+        break;
+        case TAN:
+          botones = ARCOTANGENTE;
+          activadorShift = 0;
+        break;
+      }
+    }
     CALC_deBotonesAString();
   }
 }
@@ -502,9 +563,9 @@ void CALC_solucionarOperacion() {
       }
 
       
-      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA) or (caracter == RAIZ_X) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN)) {
+      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA) or (caracter == RAIZ_X) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN) or (caracter ==ARCOSENO) or (caracter == ARCOCOSENO) or (caracter == ARCOTANGENTE)) {
         posicionSignos[contadorValores] = caracter;
-        if ((caracter == RAIZ_CUADRADA) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN)) {
+        if ((caracter == RAIZ_CUADRADA) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN) or (caracter == ARCOSENO) or (caracter == ARCOCOSENO) or (caracter == ARCOTANGENTE)) {
           contadorValores++;
         }
       }
@@ -548,7 +609,7 @@ void CALC_solucionarOperacion() {
   contadorValores++; //para las raices que tienen el signo delante del número
 
 
-  // T R I G O N O M E T R I A
+  // T R I G O N O M E T R I A       SENO COSENO TANGENTE
   for (byte i = 0; i < contadorValores+1; i++) {
     if (posicionSignos[i] == SEN) {
       for (int a = i; a <= contadorValores+1; a++) {
@@ -602,6 +663,64 @@ void CALC_solucionarOperacion() {
       i--;
     }
   }
+
+
+  // T R I G O N O M E T R I A       ARCOSENO   ARCOCOSENO   ARCOTANGENTE
+  for (byte i = 0; i < contadorValores+1; i++) {
+    if (posicionSignos[i] == ARCOSENO) {
+      for (int a = i; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+      }
+      if (activadorRadianes == 1) {
+        valorNumerico[i] = asin(valorNumerico[i]);
+      }
+      else {
+        valorNumerico[i] = ((asin(valorNumerico[i])) * 360) / (2 * PI);
+      }
+      
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+    if (posicionSignos[i] == ARCOCOSENO) {
+      for (int a = i; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+      }
+      if (activadorRadianes == 1) {
+        valorNumerico[i] = acos(valorNumerico[i]);
+      }
+      else {
+        valorNumerico[i] = ((acos(valorNumerico[i])) * 360) / (2 * PI);
+      }
+      
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+    if (posicionSignos[i] == ARCOTANGENTE) {
+      for (int a = i; a <= contadorValores+1; a++) {
+        valorNumerico[a] = valorNumerico[a+1];
+      }
+      if (activadorRadianes == 1) {
+        valorNumerico[i] = atan(valorNumerico[i]);
+      }
+      else {
+        valorNumerico[i] = ((atan(valorNumerico[i])) * 360) / (2 * PI);
+      }
+      
+      posicionSignos[i] = 0;
+      for (int a = i+1; a <= contadorValores+1; a++) {
+        posicionSignos[a-1] = posicionSignos[a];
+      }
+      i--;
+    }
+  }
+
+
 
 
   // L O G A R I T M O
@@ -784,11 +903,20 @@ void CALC_escribirLCD() {
       case COS:
         stringOperacionVisual += "cos";
       break;
+      case ARCOCOSENO:
+        stringOperacionVisual += "cosU ";
+      break;
       case SEN:
         stringOperacionVisual += "sen";
       break;
+      case ARCOSENO:
+        stringOperacionVisual += "senU ";
+      break;
       case TAN:
         stringOperacionVisual += "tan";
+      break;
+      case ARCOTANGENTE:
+        stringOperacionVisual += "tanU ";
       break;
       case LOGARITMO_BASE_10:
         stringOperacionVisual += "log";
@@ -827,7 +955,7 @@ void CALC_escribirLCD() {
         stringOperacionVisual += "P";
       break;
       case NUMERO_e:
-        stringOperacionVisual += 'n';
+        stringOperacionVisual += 'N';
       break;
 
     }
@@ -859,10 +987,13 @@ void CALC_escribirLCD() {
     if (stringOperacionVisualLCD.charAt(i) == 'P') {
       lcd.write(byte(2));
     }
-    if (stringOperacionVisualLCD.charAt(i) == 'n') {
+    if (stringOperacionVisualLCD.charAt(i) == 'N') {
       lcd.write(byte(3));
     }
-    else if ((stringOperacionVisualLCD.charAt(i) != 'K') && (stringOperacionVisualLCD.charAt(i) != 'q') && (stringOperacionVisualLCD.charAt(i) != 'P') && (stringOperacionVisualLCD.charAt(i) != 'n')) {
+    if (stringOperacionVisualLCD.charAt(i) == 'U') {
+      lcd.write(byte(4));
+    }
+    else if ((stringOperacionVisualLCD.charAt(i) != 'K') && (stringOperacionVisualLCD.charAt(i) != 'q') && (stringOperacionVisualLCD.charAt(i) != 'P') && (stringOperacionVisualLCD.charAt(i) != 'N') && (stringOperacionVisualLCD.charAt(i) != 'U')) {
       lcd.print(stringOperacionVisualLCD.charAt(i));
     }
   }
@@ -919,13 +1050,13 @@ void setup() {
   lcd.createChar(1, RAIZ_DE_X_CARACTER);
   lcd.createChar(2, NUMERO_PI_CARACTER);
   lcd.createChar(3, NUMERO_E_CARACTER);
+  lcd.createChar(4, ELEVADO_MENOS_UNO_CARACTER);
 
   lcd.clear();
   lcd.setCursor(5, 1);
   lcd.print("MoaisEnergyDEF");
   delay(1000);
   lcd.clear();
-
   tiempoParpadeo = millis();
   tiempoReinicioOhms = millis();
 
