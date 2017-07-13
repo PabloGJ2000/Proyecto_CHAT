@@ -1,7 +1,7 @@
 /* PROYECTO CHAT
     Hecho por: Pablo García Jaén - https://twitter.com/PabloGarciaJaen -
 
-    **Última modificación: 20/06/2017
+    **Última modificación: 13/07/2017
     **Última modificación hecha por: Pablo García Jaén
 
     Proyecto CHAT is licensed under
@@ -10,6 +10,9 @@
     https://moaisenergy.com/acerca-de/
 
     Proyecto publicado en: https://moaisenergy.com/proyecto-chat/
+    
+    **Datos importantes:
+    -Placa utilizada: Adafruit Feather M0
 */
 
 
@@ -91,8 +94,6 @@ float resultado;                                //variable tipo float (porque ac
 //float ans;                                      //variable tipo float (porque acepta decimales y almacena 4bytes). Esta variable será la que llamaremos cuando pulsemos "Ans" que valdrá el último resultado obtenido.
 
 
-
-
 //VARIABLES & CONSTANTES GLOBALES DEL MODO CALCULADORA MULTÍMETRO.
 const byte PIN_OHMETRO = A0;                    //pin analógico donde medimos la resistencia.
 unsigned long ohmios;                           //variable donde almacenar los ohmios de la resistencia.
@@ -148,8 +149,10 @@ boolean activadorRadianes = 0;
   const char IZQUIERDA = 'u';
 
   const char SHIFT = 'f';
-
+  const char MODO = 'M';
+  
   const char BORRAR_AC = 'a';
+  const char BORRAR_DEL = 'd';
 
 
 byte RAIZ_CARACTER[8] = {                  
@@ -235,7 +238,13 @@ float deRadianesAGrados(float a) {              //función para pasar de radiane
 
 
 void GENERAL_distribucionBotones() {             //función por si uno de los botones que hemos pulsado es para cambiar de modo
-
+  if (modo == 4) {
+    modo = 0;
+  }
+  if (botones == MODO) {
+    modo++;
+    lcd.clear();
+  }
 }
 
 
@@ -245,7 +254,7 @@ byte xparpadeoLCD = 0;
 void CALC_deBotonesAString() {                   //función para guardar el caracter del botón pulsado (por ejemplo '2') en un string. De esta forma podremos borrar un carácter si nos confundimos
   String a = stringOperacion;
   String b = stringOperacion;
-  Serial.println("WIIG");
+  //Serial.println("WIIG");
   if ((botones != IZQUIERDA) && (botones != DERECHA)) {
     //stringOperacion = a.substring(0,xparpadeo) + prueba + b.substring(xparpadeo+1);
     //stringOperacion = a.substring(0,xparpadeo) + botones;// + b.substring(xparpadeo+1);  /////////////////////// P R E G U N T A R ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -282,7 +291,7 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
       if ((stringOperacion.charAt(xparpadeo-1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOTANGENTE)) {
         xparpadeoLCD -= 5;
       }
-      else if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN)) { //error al borrar seno, coseno, tangente
+      else if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN) or (stringOperacion.charAt(xparpadeo-1) == LOGARITMO_BASE_10)) { //error al borrar seno, coseno, tangente
         xparpadeoLCD -=3;
       }
       else if ((stringOperacion.charAt(xparpadeo-1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo-1) == RAIZ_X)) {
@@ -302,6 +311,13 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
       stringOperacion = a.substring(0,xparpadeo) + b.substring(xparpadeo+1);
     }
   }
+  else if (botones == BORRAR_DEL) {
+    xparpadeo = 0;
+    xparpadeoLCD = 0;
+    stringOperacion.remove(0);
+    resultado = 0;
+    lcd.clear();
+  }
 
   else if ((botones == IZQUIERDA) && (xparpadeo > 0))  {
     lcd.setCursor(xparpadeoLCD, 0);
@@ -309,7 +325,7 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     if ((stringOperacion.charAt(xparpadeo-1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOTANGENTE)) {
       xparpadeoLCD -= 5;
     }
-    if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN)) { //error al borrar seno, coseno, tangente
+    if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN) or (stringOperacion.charAt(xparpadeo-1) == LOGARITMO_BASE_10)) { //error al borrar seno, coseno, tangente
       xparpadeoLCD -=3;
     }
     else if ((stringOperacion.charAt(xparpadeo-1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo-1) == RAIZ_X)) {
@@ -324,7 +340,7 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     if ((stringOperacion.charAt(xparpadeo) == ARCOSENO) or (stringOperacion.charAt(xparpadeo) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo) == ARCOTANGENTE)) {
       xparpadeoLCD += 5;
     }
-    if ((stringOperacion.charAt(xparpadeo) == COS) or (stringOperacion.charAt(xparpadeo) == SEN) or (stringOperacion.charAt(xparpadeo) == TAN)) { //error al borrar seno, coseno, tangente
+    if ((stringOperacion.charAt(xparpadeo) == COS) or (stringOperacion.charAt(xparpadeo) == SEN) or (stringOperacion.charAt(xparpadeo) == TAN) or (stringOperacion.charAt(xparpadeo) == LOGARITMO_BASE_10)) { //error al borrar seno, coseno, tangente
       xparpadeoLCD +=3;
     }
     else if ((stringOperacion.charAt(xparpadeo) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo) == RAIZ_X)) {
@@ -354,12 +370,27 @@ boolean activadorxParpadeoFinal = 0;
 boolean activadorShift = 0;
 
 void CALC_distribucionBotones() {
-  Serial.println(botones);
+  //Serial.println(botones);
   if (botones == '=') {
     subOperacion[0] = stringOperacion;
     xparpadeo = stringOperacion.length() + 1;
     activadorxParpadeoFinal = 1;
     CALC_solucionarTotalOperacion();
+    //VARIABLES A 0
+    activadorTEST = 1;
+    activadorShift = 0;
+
+    generalInicioParentesis[0] = 0;
+    generalInicioParentesis[1] = 0;
+    generalInicioParentesis[2] = 0;
+    generalFinalParentesis[0] = 0;
+    generalFinalParentesis[1] = 0;
+    generalFinalParentesis[2] = 0;
+    contadorInicioFinalParentesis = 0;
+    activadorGeneralFinalParentesis = 0;
+    activadorInicioParentesis = 0;
+    activadorParentesis = 0;
+    contadorParentesis = 0;
 
   }
   if(activadorxParpadeoFinal == 0) {
@@ -387,7 +418,7 @@ void CALC_distribucionBotones() {
 }
 
 void CALC_solucionarTotalOperacion() {
-  Serial.println("[INICIO]CALC_solucionarTotalOperacion");
+  //Serial.println("[INICIO]CALC_solucionarTotalOperacion");
   subOperacion[1] = subOperacion[0];
   while (activadorTEST == 1) {
     if (CALC_detectarParentesis(subOperacion[1]) == 1) {
@@ -422,13 +453,13 @@ void CALC_solucionarTotalOperacion() {
     }
   }
 
-  Serial.println("[FINAL]CALC_solucionarTotalOperacion");
+  //Serial.println("[FINAL]CALC_solucionarTotalOperacion");
   return;
 }
 
 boolean CALC_detectarParentesis(String operacion) {
-  Serial.println("CALC_detectarParentesis");
-  Serial.println(operacion);
+  //Serial.println("CALC_detectarParentesis");
+  //Serial.println(operacion);
   byte longitudOperacion = operacion.length();
 
   for (byte i = 0; i < longitudOperacion; i++) {
@@ -441,8 +472,8 @@ boolean CALC_detectarParentesis(String operacion) {
 }
 
 void CALC_separarParentesis(String operacion) {
-  Serial.println("[INICIO]CALC_separarParentesis");
-  Serial.println(operacion);
+  //Serial.println("[INICIO]CALC_separarParentesis");
+  //Serial.println(operacion);
   byte longitudOperacion = operacion.length();
 
   subOperacion[1] = operacion;
@@ -474,14 +505,14 @@ void CALC_separarParentesis(String operacion) {
       activadorInicioParentesis = 0;
       activadorParentesis = 0;
       subOperacion[1] =  operacion.substring(generalInicioParentesis[contadorInicioFinalParentesis], generalFinalParentesis[contadorInicioFinalParentesis]);
-      Serial.println(subOperacion[1]);
+      //Serial.println(subOperacion[1]);
       contadorInicioFinalParentesis = 1;
       return;
 
 
     }
   }
-  Serial.println("[FINAL]CALC_separarParentesis");
+  //Serial.println("[FINAL]CALC_separarParentesis");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -551,7 +582,7 @@ void CALC_solucionarOperacion() {
         }
         valorNumerico[contadorValores] = 0;
         contadorValores--;
-        Serial.println(valorNumerico[contadorValores]);
+        //Serial.println(valorNumerico[contadorValores]);
       }
       if (caracter == '.') {
         activadorDecimales = 1;
@@ -599,12 +630,12 @@ void CALC_solucionarOperacion() {
 
 
 
-  for (byte i = 0; i < 5; i++) {
+/*  for (byte i = 0; i < 5; i++) {
     Serial.print("numero =  ");
     Serial.println(valorNumerico[i]);
     Serial.println(posicionSignos[i]);
   }
-  
+*/
   
   contadorValores++; //para las raices que tienen el signo delante del número
 
@@ -628,6 +659,8 @@ void CALC_solucionarOperacion() {
       }
       i--;
     }
+  }
+  for (byte i = 0; i < contadorValores+1; i++) {
     if (posicionSignos[i] == COS) {
       for (int a = i; a <= contadorValores+1; a++) {
         valorNumerico[a] = valorNumerico[a+1];
@@ -645,6 +678,8 @@ void CALC_solucionarOperacion() {
       }
       i--;
     }
+  }
+  for (byte i = 0; i < contadorValores+1; i++) {
     if (posicionSignos[i] == TAN) {
       for (int a = i; a <= contadorValores+1; a++) {
         valorNumerico[a] = valorNumerico[a+1];
@@ -684,6 +719,8 @@ void CALC_solucionarOperacion() {
       }
       i--;
     }
+  }
+  for (byte i = 0; i < contadorValores+1; i++) {
     if (posicionSignos[i] == ARCOCOSENO) {
       for (int a = i; a <= contadorValores+1; a++) {
         valorNumerico[a] = valorNumerico[a+1];
@@ -701,6 +738,8 @@ void CALC_solucionarOperacion() {
       }
       i--;
     }
+  }
+  for (byte i = 0; i < contadorValores+1; i++) {
     if (posicionSignos[i] == ARCOTANGENTE) {
       for (int a = i; a <= contadorValores+1; a++) {
         valorNumerico[a] = valorNumerico[a+1];
@@ -736,7 +775,9 @@ void CALC_solucionarOperacion() {
       }
       i--;
     }
-
+  }
+  
+  for (byte i = 0; i < contadorValores+1; i++) {
     if (posicionSignos[i] == LOGARITMO_NEPERIANO) {
       for (int a = i; a <= contadorValores+1; a++) {
         valorNumerico[a] = valorNumerico[a+1];
@@ -752,7 +793,6 @@ void CALC_solucionarOperacion() {
 
   // P O T E N C I A      Y      R A I Z
   for (byte i = 0; i < contadorValores+1; i++) {
-
     if (posicionSignos[i] == POTENCIA) {
       valorNumerico[i] = pow(valorNumerico[i], valorNumerico[i+1]);
       posicionSignos[i] = 0;
@@ -762,7 +802,9 @@ void CALC_solucionarOperacion() {
       }
       i--;
     }
-
+  }
+  
+  for (byte i = 0; i < contadorValores+1; i++) {
     if (posicionSignos[i] == RAIZ_CUADRADA) {
       for (int a = i; a <= contadorValores+1; a++) {
         valorNumerico[a] = valorNumerico[a+1];
@@ -774,7 +816,9 @@ void CALC_solucionarOperacion() {
       }
       i--;
     }
-
+  }
+  
+  for (byte i = 0; i < contadorValores+1; i++) {
     if (posicionSignos[i] == RAIZ_X) {
       valorNumerico[i] = pow(valorNumerico[i+1], 1/valorNumerico[i]);
       posicionSignos[i] = 0;
@@ -786,18 +830,19 @@ void CALC_solucionarOperacion() {
     }
   }
 
- for (byte i = 0; i < 5; i++) {
+  
+ /*for (byte i = 0; i < 5; i++) {
     Serial.print("[fd]numero =  ");
     Serial.println(valorNumerico[i]);
     Serial.println(posicionSignos[i]);
   }
-
+*/
 
 
   // M U L T I P L I C A C I O N       Y       D I V I S O R
   for (byte i = 0; i < contadorValores+1; i++) {
-    if (posicionSignos[i] == MULTIPLICACION) {
-      valorNumerico[i] = valorNumerico[i] * valorNumerico[i+1];
+    if (posicionSignos[i] == DIVISION) {
+      valorNumerico[i] = valorNumerico[i] / valorNumerico[i+1];
       posicionSignos[i] = 0;
       for (int a = i+1; a <= contadorValores+1; a++) {
         valorNumerico[a] = valorNumerico[a+1];
@@ -805,8 +850,10 @@ void CALC_solucionarOperacion() {
       }
       i--;
     }
-    if (posicionSignos[i] == DIVISION) {
-      valorNumerico[i] = valorNumerico[i] / valorNumerico[i+1];
+  }
+  for (byte i = 0; i < contadorValores+1; i++) {
+    if (posicionSignos[i] == MULTIPLICACION) {
+      valorNumerico[i] = valorNumerico[i] * valorNumerico[i+1];
       posicionSignos[i] = 0;
       for (int a = i+1; a <= contadorValores+1; a++) {
         valorNumerico[a] = valorNumerico[a+1];
@@ -822,13 +869,13 @@ void CALC_solucionarOperacion() {
   for (int i = 0; i <= contadorValores; i++) {
     resultado += valorNumerico[i];
   }
-  Serial.println("RESULTADO");
-  Serial.println(resultado);
-  Serial.println("[FINAL]CALC_solucionarOperacion");
+  //Serial.println("RESULTADO");
+  //Serial.println(resultado);
+  //Serial.println("[FINAL]CALC_solucionarOperacion");
 }
 
 
-String floatToString( float n, int l, int d, boolean z) {
+/*String floatToString( float n, int l, int d, boolean z) {
   // Convierte un float en una cadena.
   // n -> número a convertir.
   // l -> longitud total de la cadena, por defecto 8.
@@ -851,23 +898,23 @@ String floatToString( float n, int l, int d, boolean z) {
   }
   return s;
 }
-
+*/
 void CALC_sustituirParentesis() {
-  Serial.println("[INICIO]CALC_sustituirParentesis");
-  Serial.println(subOperacion[0]);
+  //Serial.println("[INICIO]CALC_sustituirParentesis");
+  //Serial.println(subOperacion[0]);
   String anteriorResultado;
   String posteriorResultado;
   anteriorResultado = subOperacion[0].substring(0, generalInicioParentesis[2]);
   posteriorResultado = subOperacion[0].substring(generalFinalParentesis[2] + 1);
   subOperacion[0] = anteriorResultado;         // + floatToString(resultado, 5, 4, 1) + posteriorResultado;
-  subOperacion[0] += floatToString(resultado, 5, 4, 1);
+  //subOperacion[0] += floatToString(resultado, 5, 4, 1);
+  subOperacion[0] += resultado;
   subOperacion[0] += posteriorResultado;
   subOperacion[1] = subOperacion[0];
-  Serial.println(anteriorResultado);
-  Serial.println(floatToString(resultado, 5, 4, 1));
-  Serial.println(posteriorResultado);
-  Serial.println(subOperacion[0]);
-  Serial.println("[FINAL]CALC_sustituirParentesis");
+  //Serial.println(anteriorResultado);
+  //Serial.println(posteriorResultado);
+  //Serial.println(subOperacion[0]);
+  //Serial.println("[FINAL]CALC_sustituirParentesis");
   return;
 }
 
@@ -875,7 +922,7 @@ void CALC_sustituirParentesis() {
 
 
 unsigned long tiempoParpadeo;                   //variable donde almacenar el tiempo (en millis) transcurrido. Será utilizado para medir el tiempo de parpadeo que se produce en la posición donde vamos a escribir.
-const int TIEMPO_PARPADEO = 1800;               //tiempo que tiene que pasar entre cada parpadeo.
+const int TIEMPO_PARPADEO = 1200;               //tiempo que tiene que pasar entre cada parpadeo.
 
 
 //void parpadeoLCD() {
@@ -931,7 +978,7 @@ void CALC_escribirLCD() {
         stringOperacionVisual += "-";
       break;
       case MULTIPLICACION:
-        stringOperacionVisual += "*";
+        stringOperacionVisual += "x";
       break;
       case DIVISION:
         stringOperacionVisual += "/";
@@ -973,9 +1020,9 @@ void CALC_escribirLCD() {
   }
   if (xparpadeoLCD < stringOperacionVisualLCD.length()) {
     lcd.setCursor(stringOperacionVisualLCD.length(), 0);
-    lcd.print("   ");
+    lcd.print("                ");
   }
-
+  if ((millis() - tiempoParpadeo >= TIEMPO_PARPADEO / 2) && (millis() - tiempoParpadeo <= TIEMPO_PARPADEO)) {
   lcd.setCursor(0, 0);
   for (byte i = 0; i < valorx; i++) {
     if (stringOperacionVisualLCD.charAt(i) == 'K') {
@@ -997,11 +1044,14 @@ void CALC_escribirLCD() {
       lcd.print(stringOperacionVisualLCD.charAt(i));
     }
   }
+  }
+
   
   lcd.setCursor(stringOperacionVisualLCD.length()+1, 0);
-  lcd.print("   ");
+  lcd.print("                ");
   lcd.setCursor(0, 1);
   lcd.print(resultado);
+  lcd.print("                ");
 
   lcd.setCursor(xparpadeoLCD, 0);
   if (millis() - tiempoParpadeo <= TIEMPO_PARPADEO / 2) {
@@ -1016,8 +1066,42 @@ void CALC_escribirLCD() {
   else {
     tiempoParpadeo = millis();
   }
- 
 }
+
+
+void ELEGIR_MODO_escrbir_LCD() {
+  lcd.setCursor(0,0);
+  lcd.print(" CALC  MULT  BT ");
+  lcd.setCursor(0,1);
+  lcd.print("  1     2    3  ");
+}
+
+void ELEGIR_GRADOS_RADIANES_LCD() {
+  lcd.setCursor(0,0);
+  if (activadorRadianes == 0) {
+    lcd.print("GRADOS radianes");
+  }
+  else if (activadorRadianes == 1) {
+    lcd.print("grados RADIANES");
+  }
+  lcd.setCursor(0,1);
+  lcd.print("  1        2    ");
+}
+
+void ELEGIR_GRADOS_RADIANES() {
+  if (botones == '1') {
+    activadorRadianes = 0;
+    lcd.clear();
+    modo = 1;
+  }
+  if (botones == '2') {
+    activadorRadianes = 1;
+    lcd.clear();
+    modo = 1;
+  }
+}
+
+
 
 void leerResistencia() {
 
@@ -1036,7 +1120,7 @@ void escribirBluetoothLCD() {
 }
 
 void setup() {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   keypad.begin(I2C_ADDRESS, makeKeymap(keys));
   keypad1.begin(I2C_ADDRESS1, makeKeymap(keys1));
   keypad2.begin(I2C_ADDRESS2, makeKeymap(keys2));
@@ -1062,7 +1146,7 @@ void setup() {
 
 
   //////////////////////////////////////////////////////
-
+  //Serial.println("INICIOOOOOOOOO");
 
   subOperacion[0] = stringOperacion;
   //CALC_solucionarTotalOperacion();//////////////////////////////////////////////////////////////////////////////
@@ -1081,36 +1165,37 @@ void loop() {
   switch (modo) {
     case 1: //MODO CALCULADORA
       if (botones) {
+        Serial.println("WIII8");
+        Serial.println(botones);
+        Serial.println(stringOperacion);
         CALC_distribucionBotones();
       }
-      break;
+    break;
     case 2:  //MODO OHMETRO
-      leerResistencia();
-      break;
+      ELEGIR_MODO_escrbir_LCD();
+    break;
     case 3:  //MODO BLUETOOTH
-
-      break;
+      ELEGIR_GRADOS_RADIANES_LCD();
+      ELEGIR_GRADOS_RADIANES();
+    break;
     case 4:  //MODO CONFIGURACIÓN
-
-      break;
+      leerResistencia();
+    break;
   }
 
   //sacamos los datos al exterior
-  // if (modoAnterior != modo) {
-  // lcd.clear();
-  // }
   switch (modo) {
     case 1: //MODO CALCULADORA
       CALC_escribirLCD();
-      break;
+    break;
     case 2: //MODO OHMETRO
-      escribirOhmetroLCD();
-      break;
+      //escribirOhmetroLCD();
+    break;
     case 3:  //MODO BLUETOOTH
-      escribirBluetoothLCD();
-      break;
+      //escribirBluetoothLCD();
+    break;
     case 4:  //MODO CONFIGURACIÓN
-      escribirConfiguracionLCD();
-      break;
+      //escribirConfiguracionLCD();
+    break;
   }
 }
