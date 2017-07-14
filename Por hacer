@@ -3,11 +3,11 @@ HECHO:
 -Problema: 7/(10-70)
 -Elegir entre grados y radianes
 -Solucionar problema parpadeo cursor
+-Solucionar problema al escribir (tarda demasiado en aparecer en LCD)
+-Problema al hacer: PI*2   e*2   Ans*2
+-Añadir ANS
 
 POR HACER:
 -Configurar pantalla por si +16 carácteres
--Añadir ANS
-
-
 
 

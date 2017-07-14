@@ -90,6 +90,7 @@ String stringOperacion; // = "s-60xc-120";
 //String stringOperacionNV;                       //string donde se almacenan los caracteres pulsados. Esta variable es a partir de la cual se resuelve la operación.
 
 float resultado;                                //variable tipo float (porque acepta decimales y almacena 4bytes). Aquí se almacenará el resultado una vez pulsamos '='.
+float resultado_ans;
 //float resultadoMostrar;                         //variable tipo float (porque acepta decimales y almacena 4bytes). Una vez tengamos el resultado, esta variable será la que se muestre en la pantalla LCD.
 //float ans;                                      //variable tipo float (porque acepta decimales y almacena 4bytes). Esta variable será la que llamaremos cuando pulsemos "Ans" que valdrá el último resultado obtenido.
 
@@ -101,7 +102,6 @@ boolean activadorOhmetro = 0;                   //variable para comprobar si el 
 
 unsigned long tiempoReinicioOhms;               //variable donde almacenar el tiempo (en millis) transcurrido. Será utilizado para reiniciar los ohmios leídos.
 const int TIEMPO_REINICIO_OHMS = 10000;         //tiempo que tiene que pasar entre cada lectura del ohmetro.
-
 
 //VARIABLES & CONSTANTES GLOBALES DEL MODO CONFIGURACIÓN.
 const int LUZ_LCD = 3;                          //pin digital PWM con el que vamos a poder cambiar el brillo del fondo de la pantalla LCD.
@@ -116,7 +116,7 @@ float boton_C;                                  //variable donde podemos almacen
 
 
 boolean activadorRadianes = 0;
-
+boolean activadorAnsFinalOperacion = 0;
 
 //SIGNOS Y OPERACION
   const char MULTIPLICACION = 'x';
@@ -154,6 +154,7 @@ boolean activadorRadianes = 0;
   const char BORRAR_AC = 'a';
   const char BORRAR_DEL = 'd';
 
+  const char ANS = 'y';
 
 byte RAIZ_CARACTER[8] = {                  
   0b00111,
@@ -252,9 +253,21 @@ byte xparpadeo = 0;
 byte xparpadeoLCD = 0;
 
 void CALC_deBotonesAString() {                   //función para guardar el caracter del botón pulsado (por ejemplo '2') en un string. De esta forma podremos borrar un carácter si nos confundimos
+  if (activadorAnsFinalOperacion == 1) {
+    if ((botones == IZQUIERDA) or (botones == DERECHA)) {
+      activadorAnsFinalOperacion = 0;
+    }
+    else if ((botones != IZQUIERDA) && (botones != DERECHA)) {
+      stringOperacion = "y";
+      xparpadeo = 1;
+      xparpadeoLCD = 3;
+      activadorAnsFinalOperacion = 0;
+    }
+  }
   String a = stringOperacion;
   String b = stringOperacion;
   //Serial.println("WIIG");
+  
   if ((botones != IZQUIERDA) && (botones != DERECHA)) {
     //stringOperacion = a.substring(0,xparpadeo) + prueba + b.substring(xparpadeo+1);
     //stringOperacion = a.substring(0,xparpadeo) + botones;// + b.substring(xparpadeo+1);  /////////////////////// P R E G U N T A R ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -276,7 +289,7 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     xparpadeo++;
     xparpadeoLCD += 5;
   }
-  else if ((botones == SEN) or (botones == COS) or (botones == TAN) or (botones == LOGARITMO_BASE_10)) {
+  else if ((botones == SEN) or (botones == COS) or (botones == TAN) or (botones == LOGARITMO_BASE_10) or (botones == ANS)) {
     xparpadeo++;
     xparpadeoLCD += 3;
   }
@@ -291,7 +304,7 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
       if ((stringOperacion.charAt(xparpadeo-1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOTANGENTE)) {
         xparpadeoLCD -= 5;
       }
-      else if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN) or (stringOperacion.charAt(xparpadeo-1) == LOGARITMO_BASE_10)) { //error al borrar seno, coseno, tangente
+      else if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN) or (stringOperacion.charAt(xparpadeo-1) == LOGARITMO_BASE_10) or (stringOperacion.charAt(xparpadeo-1) == ANS)) { //error al borrar seno, coseno, tangente
         xparpadeoLCD -=3;
       }
       else if ((stringOperacion.charAt(xparpadeo-1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo-1) == RAIZ_X)) {
@@ -325,7 +338,7 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     if ((stringOperacion.charAt(xparpadeo-1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOTANGENTE)) {
       xparpadeoLCD -= 5;
     }
-    if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN) or (stringOperacion.charAt(xparpadeo-1) == LOGARITMO_BASE_10)) { //error al borrar seno, coseno, tangente
+    if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN) or (stringOperacion.charAt(xparpadeo-1) == LOGARITMO_BASE_10) or (stringOperacion.charAt(xparpadeo-1) == ANS)) { //error al borrar seno, coseno, tangente
       xparpadeoLCD -=3;
     }
     else if ((stringOperacion.charAt(xparpadeo-1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo-1) == RAIZ_X)) {
@@ -340,7 +353,7 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     if ((stringOperacion.charAt(xparpadeo) == ARCOSENO) or (stringOperacion.charAt(xparpadeo) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo) == ARCOTANGENTE)) {
       xparpadeoLCD += 5;
     }
-    if ((stringOperacion.charAt(xparpadeo) == COS) or (stringOperacion.charAt(xparpadeo) == SEN) or (stringOperacion.charAt(xparpadeo) == TAN) or (stringOperacion.charAt(xparpadeo) == LOGARITMO_BASE_10)) { //error al borrar seno, coseno, tangente
+    if ((stringOperacion.charAt(xparpadeo) == COS) or (stringOperacion.charAt(xparpadeo) == SEN) or (stringOperacion.charAt(xparpadeo) == TAN) or (stringOperacion.charAt(xparpadeo) == LOGARITMO_BASE_10) or (stringOperacion.charAt(xparpadeo) == ANS)) { //error al borrar seno, coseno, tangente
       xparpadeoLCD +=3;
     }
     else if ((stringOperacion.charAt(xparpadeo) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo) == RAIZ_X)) {
@@ -372,6 +385,7 @@ boolean activadorShift = 0;
 void CALC_distribucionBotones() {
   //Serial.println(botones);
   if (botones == '=') {
+    activadorAnsFinalOperacion = 1;
     subOperacion[0] = stringOperacion;
     xparpadeo = stringOperacion.length() + 1;
     activadorxParpadeoFinal = 1;
@@ -545,16 +559,22 @@ void CALC_solucionarOperacion() {
         valorNumerico[contadorValores] = valorNumerico[contadorValores] * -1;
       }
     }
-
-    if (caracter == NUMERO_e) {
+    else if (caracter == NUMERO_e) {
       valorNumerico[contadorValores] = exp (1);
       activadorNumeros = 1;
       if (activadorMenos == 1) {
         valorNumerico[contadorValores] = valorNumerico[contadorValores] * -1;
       }
     }
+    else if (caracter == ANS) {
+      valorNumerico[contadorValores] = resultado_ans;
+      activadorNumeros = 1;
+      if (activadorMenos == 1) {
+        valorNumerico[contadorValores] = valorNumerico[contadorValores] * -1;
+      }
+    }
 
-    if ((caracter >= 48) && (caracter <= 57)) {
+    else if ((caracter >= 48) && (caracter <= 57)) {
       numeroActual = caracter - 48 + numeroAnterior * 10;
       numeroAnterior = numeroActual;
 
@@ -570,7 +590,7 @@ void CALC_solucionarOperacion() {
       }
     }
     
-    if ((caracter < 48) or (caracter > 57)) {
+    else if ((caracter < 48) or (caracter > 57)) {
       if (activadorDecimales == 1) {
         if(valorNumerico[contadorValores-1] < 0) {
           valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] * -1;
@@ -936,6 +956,7 @@ void CALC_escribirLCD() {
   byte valorx0;
   String stringOperacionVisual;
   String stringOperacionVisualLCD;
+
   valorx0 = stringOperacion.length();
   for (byte i = 0; i <= valorx0; i++) {
     char caracter = stringOperacion.charAt(i);
@@ -943,7 +964,6 @@ void CALC_escribirLCD() {
       stringOperacionVisual += caracter;
     }
     switch (caracter) {
-
       case '.':
         stringOperacionVisual += '.';
       break;
@@ -1002,20 +1022,23 @@ void CALC_escribirLCD() {
         stringOperacionVisual += "P";
       break;
       case NUMERO_e:
-        stringOperacionVisual += 'N';
+        stringOperacionVisual += "N";
       break;
-
+      case ANS:
+        stringOperacionVisual += "Ans";
+      break;
     }
   }
   stringOperacionVisualLCD =  stringOperacionVisual;
   byte valorx = stringOperacionVisualLCD.length();
   if (valorx >= 16) {
     stringOperacionVisualLCD = stringOperacionVisual.substring(valorx - 15);
+    xparpadeoLCD = 15;
   }
   if (activadorxParpadeoFinal == 1) {
     xparpadeo = stringOperacion.length();
     xparpadeoLCD = stringOperacionVisualLCD.length();
-
+    resultado_ans = resultado;
     activadorxParpadeoFinal = 0;
   }
   if (xparpadeoLCD < stringOperacionVisualLCD.length()) {
@@ -1045,6 +1068,30 @@ void CALC_escribirLCD() {
     }
   }
   }
+  else if (botones) {
+  lcd.setCursor(0, 0);
+  for (byte i = 0; i < valorx; i++) {
+    if (stringOperacionVisualLCD.charAt(i) == 'K') {
+      lcd.write(byte(0));
+    }
+    if (stringOperacionVisualLCD.charAt(i) == 'q') {
+      lcd.write(byte(1));
+    }
+    if (stringOperacionVisualLCD.charAt(i) == 'P') {
+      lcd.write(byte(2));
+    }
+    if (stringOperacionVisualLCD.charAt(i) == 'N') {
+      lcd.write(byte(3));
+    }
+    if (stringOperacionVisualLCD.charAt(i) == 'U') {
+      lcd.write(byte(4));
+    }
+    else if ((stringOperacionVisualLCD.charAt(i) != 'K') && (stringOperacionVisualLCD.charAt(i) != 'q') && (stringOperacionVisualLCD.charAt(i) != 'P') && (stringOperacionVisualLCD.charAt(i) != 'N') && (stringOperacionVisualLCD.charAt(i) != 'U')) {
+      lcd.print(stringOperacionVisualLCD.charAt(i));
+    }
+  }
+  }
+  
 
   
   lcd.setCursor(stringOperacionVisualLCD.length()+1, 0);
@@ -1052,19 +1099,24 @@ void CALC_escribirLCD() {
   lcd.setCursor(0, 1);
   lcd.print(resultado);
   lcd.print("                ");
-
-  lcd.setCursor(xparpadeoLCD, 0);
-  if (millis() - tiempoParpadeo <= TIEMPO_PARPADEO / 2) {
-    lcd.print("_");
+  
+  
+  if (activadorAnsFinalOperacion == 0) {
+    if (millis() - tiempoParpadeo <= TIEMPO_PARPADEO / 2) {
+      lcd.setCursor(xparpadeoLCD, 0);
+      lcd.print("_");
+    }
+    else if ((millis() - tiempoParpadeo <= TIEMPO_PARPADEO) && (xparpadeoLCD == stringOperacionVisual.length())) {
+      lcd.setCursor(xparpadeoLCD, 0);
+      lcd.print(" ");
+    }
+    else {
+      tiempoParpadeo = millis();
+    }
   }
-  else if ((millis() - tiempoParpadeo <= TIEMPO_PARPADEO) && (xparpadeoLCD == stringOperacionVisual.length())) {
+  else if (activadorAnsFinalOperacion == 1) {
+    lcd.setCursor(xparpadeoLCD, 0);
     lcd.print(" ");
-  }
-  else if (millis() - tiempoParpadeo <= TIEMPO_PARPADEO) {
-
-  }
-  else {
-    tiempoParpadeo = millis();
   }
 }
 
@@ -1165,9 +1217,6 @@ void loop() {
   switch (modo) {
     case 1: //MODO CALCULADORA
       if (botones) {
-        Serial.println("WIII8");
-        Serial.println(botones);
-        Serial.println(stringOperacion);
         CALC_distribucionBotones();
       }
     break;
