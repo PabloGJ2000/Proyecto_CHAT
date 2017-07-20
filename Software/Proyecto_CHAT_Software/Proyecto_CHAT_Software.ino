@@ -1,18 +1,19 @@
 /* PROYECTO CHAT
     Hecho por: Pablo García Jaén - https://twitter.com/PabloGarciaJaen -
-
-    **Última modificación: 13/07/2017
+  
+    **Última modificación: 20/07/2017
     **Última modificación hecha por: Pablo García Jaén
-
+  
     Proyecto CHAT is licensed under
     a Creative Commons Reconocimiento-Compartir Igual 4.0 Internacional License.
     Puede hallar permisos más allá de los concedidos con esta licencia en
     https://moaisenergy.com/acerca-de/
-
+  
     Proyecto publicado en: https://moaisenergy.com/proyecto-chat/
     
     **Datos importantes:
     -Placa utilizada: Adafruit Feather M0
+    -Pantalla utilizada: LCD 16x02 sin luz de fondo. Referencia: RC1602ARS-DSO-A
 */
 
 
@@ -156,6 +157,12 @@ boolean activadorAnsFinalOperacion = 0;
 
   const char ANS = 'y';
 
+  const char MODO_CALCULADORA = 1;
+  const char MODO_MULTIMETRO = 5;
+  const char MODO_BLUETOOTH = 6;
+
+  const char MODO_OHMETRO = 7;
+
 byte RAIZ_CARACTER[8] = {                  
   0b00111,
   0b00100,
@@ -211,6 +218,17 @@ byte ELEVADO_MENOS_UNO_CARACTER[8] = {
   0b00000  
 };
 
+byte OHMIO_CARACTER[8] = {
+  0b00000,
+  0b00000,
+  0b01110,
+  0b10001,
+  0b10001,   
+  0b01010, 
+  0b11011,     
+  0b00000  
+};
+
 //FUNCIÓN PARA LEER LOS BOTONES.
 void leerBotones() {
   char botonesA;                                //declaramos 1/3 del teclado
@@ -252,6 +270,8 @@ void GENERAL_distribucionBotones() {             //función por si uno de los bo
 byte xparpadeo = 0;
 byte xparpadeoLCD = 0;
 
+//byte intervalo;
+
 void CALC_deBotonesAString() {                   //función para guardar el caracter del botón pulsado (por ejemplo '2') en un string. De esta forma podremos borrar un carácter si nos confundimos
   if (activadorAnsFinalOperacion == 1) {
     if ((botones == IZQUIERDA) or (botones == DERECHA)) {
@@ -279,23 +299,28 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
   if ((botones >= 48) && (botones <= 57)) {
     xparpadeo++;
     xparpadeoLCD++;
+    //intervalo++;
   }
 
   else if ((botones == SUMA) or (botones == RESTA) or (botones == MULTIPLICACION) or (botones == DIVISION) or (botones == RAIZ_CUADRADA) or (botones == POTENCIA) or (botones == PARENTESIS_ABRIR) or (botones == PARENTESIS_CERRAR) or (botones == '.') or (botones == NUMERO_PI) or (botones == NUMERO_e)) {
     xparpadeo++;
     xparpadeoLCD++;
+    //intervalo++;
   }
   else if ((botones == ARCOSENO) or (botones == ARCOCOSENO) or (botones == ARCOTANGENTE)) {
     xparpadeo++;
     xparpadeoLCD += 5;
+    //intervalo+= 5;
   }
   else if ((botones == SEN) or (botones == COS) or (botones == TAN) or (botones == LOGARITMO_BASE_10) or (botones == ANS)) {
     xparpadeo++;
     xparpadeoLCD += 3;
+    //intervalo+=5;
   }
   else if ((botones == LOGARITMO_NEPERIANO) or (botones == RAIZ_X)) {
     xparpadeo++;
     xparpadeoLCD += 2;
+    //intervalo+=2;
   }
   else if (botones == BORRAR_AC) {
     if (xparpadeo == stringOperacion.length()-1) {
@@ -329,38 +354,48 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     xparpadeoLCD = 0;
     stringOperacion.remove(0);
     resultado = 0;
+    //intervalo = 0;
     lcd.clear();
   }
 
   else if ((botones == IZQUIERDA) && (xparpadeo > 0))  {
+    
     lcd.setCursor(xparpadeoLCD, 0);
     lcd.print(" ");
     if ((stringOperacion.charAt(xparpadeo-1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOTANGENTE)) {
       xparpadeoLCD -= 5;
+      //intervalo += 5;
     }
     if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN) or (stringOperacion.charAt(xparpadeo-1) == LOGARITMO_BASE_10) or (stringOperacion.charAt(xparpadeo-1) == ANS)) { //error al borrar seno, coseno, tangente
       xparpadeoLCD -=3;
+      //intervalo += 3; 
     }
     else if ((stringOperacion.charAt(xparpadeo-1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo-1) == RAIZ_X)) {
       xparpadeoLCD -=2;
+      //intervalo += 2; 
     }
     else {
       xparpadeoLCD--;
+      //intervalo ++;
     }
     xparpadeo--;
   }
   else if ((botones == DERECHA) && (xparpadeo < stringOperacion.length())) {
     if ((stringOperacion.charAt(xparpadeo) == ARCOSENO) or (stringOperacion.charAt(xparpadeo) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo) == ARCOTANGENTE)) {
       xparpadeoLCD += 5;
+      //intervalo -= 5;
     }
     if ((stringOperacion.charAt(xparpadeo) == COS) or (stringOperacion.charAt(xparpadeo) == SEN) or (stringOperacion.charAt(xparpadeo) == TAN) or (stringOperacion.charAt(xparpadeo) == LOGARITMO_BASE_10) or (stringOperacion.charAt(xparpadeo) == ANS)) { //error al borrar seno, coseno, tangente
       xparpadeoLCD +=3;
+      //intervalo -= 3;
     }
     else if ((stringOperacion.charAt(xparpadeo) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo) == RAIZ_X)) {
       xparpadeoLCD +=2;
+      //intervalo -= 2;
     }
     else {
       xparpadeoLCD++;
+     // intervalo --;
     }
     xparpadeo++;
   }
@@ -405,7 +440,7 @@ void CALC_distribucionBotones() {
     activadorInicioParentesis = 0;
     activadorParentesis = 0;
     contadorParentesis = 0;
-
+    //intervalo = 15;
   }
   if(activadorxParpadeoFinal == 0) {
     if (botones == SHIFT) {
@@ -938,25 +973,18 @@ void CALC_sustituirParentesis() {
   return;
 }
 
-
-
-
 unsigned long tiempoParpadeo;                   //variable donde almacenar el tiempo (en millis) transcurrido. Será utilizado para medir el tiempo de parpadeo que se produce en la posición donde vamos a escribir.
 const int TIEMPO_PARPADEO = 1200;               //tiempo que tiene que pasar entre cada parpadeo.
 
 
-//void parpadeoLCD() {
-  
-//}
-
-
-
+String stringOperacionVisual;
+String stringOperacionVisualLCD;
 
 void CALC_escribirLCD() {
   byte valorx0;
-  String stringOperacionVisual;
-  String stringOperacionVisualLCD;
-
+  stringOperacionVisual.remove(0);
+  stringOperacionVisualLCD.remove(0);
+  //byte xparpadeoLCD = xparpadeoLCD;
   valorx0 = stringOperacion.length();
   for (byte i = 0; i <= valorx0; i++) {
     char caracter = stringOperacion.charAt(i);
@@ -1031,10 +1059,14 @@ void CALC_escribirLCD() {
   }
   stringOperacionVisualLCD =  stringOperacionVisual;
   byte valorx = stringOperacionVisualLCD.length();
-  if (valorx >= 16) {
-    stringOperacionVisualLCD = stringOperacionVisual.substring(valorx - 15);
-    xparpadeoLCD = 15;
+  byte xparpadeoLCD_VISUAL = xparpadeoLCD;
+  if (xparpadeoLCD > 15) {//&& (valorx - intervalo > 0)) {
+    //byte intervalo = xparpadeoLCD;
+    stringOperacionVisualLCD = stringOperacionVisual.substring(xparpadeoLCD-15);
+    stringOperacionVisualLCD += " ";
+    xparpadeoLCD_VISUAL = 15;
   }
+
   if (activadorxParpadeoFinal == 1) {
     xparpadeo = stringOperacion.length();
     xparpadeoLCD = stringOperacionVisualLCD.length();
@@ -1092,8 +1124,6 @@ void CALC_escribirLCD() {
   }
   }
   
-
-  
   lcd.setCursor(stringOperacionVisualLCD.length()+1, 0);
   lcd.print("                ");
   lcd.setCursor(0, 1);
@@ -1103,11 +1133,11 @@ void CALC_escribirLCD() {
   
   if (activadorAnsFinalOperacion == 0) {
     if (millis() - tiempoParpadeo <= TIEMPO_PARPADEO / 2) {
-      lcd.setCursor(xparpadeoLCD, 0);
+      lcd.setCursor(xparpadeoLCD_VISUAL, 0);
       lcd.print("_");
     }
     else if ((millis() - tiempoParpadeo <= TIEMPO_PARPADEO) && (xparpadeoLCD == stringOperacionVisual.length())) {
-      lcd.setCursor(xparpadeoLCD, 0);
+      lcd.setCursor(xparpadeoLCD_VISUAL, 0);
       lcd.print(" ");
     }
     else {
@@ -1115,11 +1145,25 @@ void CALC_escribirLCD() {
     }
   }
   else if (activadorAnsFinalOperacion == 1) {
-    lcd.setCursor(xparpadeoLCD, 0);
+    lcd.setCursor(xparpadeoLCD_VISUAL, 0);
     lcd.print(" ");
   }
 }
 
+void ELEGIR_MODO_escrbir() {
+  if (botones == '1') {
+    lcd.clear();
+    modo = MODO_CALCULADORA;
+  }
+  if (botones == '2') {
+    lcd.clear();
+    modo = MODO_MULTIMETRO;
+  }
+  if (botones == '3') {
+    lcd.clear();
+    modo = MODO_BLUETOOTH;
+  }
+}
 
 void ELEGIR_MODO_escrbir_LCD() {
   lcd.setCursor(0,0);
@@ -1153,13 +1197,63 @@ void ELEGIR_GRADOS_RADIANES() {
   }
 }
 
-
-
-void leerResistencia() {
-
+void MULT_ELEGIR_SUBMODO_LCD() {
+  lcd.setCursor(0,0);
+  lcd.print(" OHM  VOLT  AMP ");
+  lcd.setCursor(0,1);
+  lcd.print("  1     2    3  ");
 }
 
-void escribirOhmetroLCD() {
+void MULT_ELEGIR_SUBMODO() {
+  if (botones == '1') {
+    lcd.clear();
+    modo = MODO_OHMETRO;
+  }
+  if (botones == '2') {
+    lcd.clear();
+    //modo = MODO_MULTIMETRO;
+  }
+  if (botones == '3') {
+    lcd.clear();
+    //modo = MODO_BLUETOOTH;
+  }
+}
+
+void MULT_OHMETRO_LCD(){
+  lcd.setCursor(0,0);
+  lcd.print("Ohmetro");
+  
+  if (activadorOhmetro == 1) {
+    lcd.setCursor(0,1);
+    //lcd.print(ohmios);
+    //lcd.write(byte(5));
+    //lcd.print("               ");
+  }
+  else {
+    lcd.setCursor(0,1);
+    //lcd.print("Valor indefinido");
+  }
+}
+
+void MULT_OHMETRO() {
+  const int resistenciaFija = 10000;
+  int valorRecibido;
+  valorRecibido = analogRead(PIN_OHMETRO);
+  if (valorRecibido == 0) {
+    activadorOhmetro = 0;
+  }
+  else {
+    activadorOhmetro = 1;
+  }
+  lcd.setCursor(0,1);
+  
+  double voltage = valorRecibido*(5.0000/1023.0000); 
+  float resistor=10000*(5-voltage)/voltage; 
+
+  
+  lcd.print(resistor);
+  lcd.print("             ");
+  //ohmios = (unsigned long)1023 * resistenciaFija / valorRecibido - resistenciaFija;
 
 }
 
@@ -1187,10 +1281,11 @@ void setup() {
   lcd.createChar(2, NUMERO_PI_CARACTER);
   lcd.createChar(3, NUMERO_E_CARACTER);
   lcd.createChar(4, ELEVADO_MENOS_UNO_CARACTER);
+  lcd.createChar(5, OHMIO_CARACTER);
 
   lcd.clear();
   lcd.setCursor(5, 1);
-  lcd.print("MoaisEnergyDEF");
+  lcd.print("MoaisEnergy");
   delay(1000);
   lcd.clear();
   tiempoParpadeo = millis();
@@ -1220,31 +1315,48 @@ void loop() {
         CALC_distribucionBotones();
       }
     break;
-    case 2:  //MODO OHMETRO
-      ELEGIR_MODO_escrbir_LCD();
+    case 2:
+      ELEGIR_MODO_escrbir();
     break;
-    case 3:  //MODO BLUETOOTH
-      ELEGIR_GRADOS_RADIANES_LCD();
+    case 3:
       ELEGIR_GRADOS_RADIANES();
     break;
-    case 4:  //MODO CONFIGURACIÓN
-      leerResistencia();
+    case 4:
+      
+    break;
+    case 5:
+      MULT_ELEGIR_SUBMODO();
+    break;
+    case 6:
+
+    break;
+    case 7:
+      MULT_OHMETRO();
     break;
   }
 
   //sacamos los datos al exterior
   switch (modo) {
-    case 1: //MODO CALCULADORA
+    case 1:
       CALC_escribirLCD();
     break;
-    case 2: //MODO OHMETRO
-      //escribirOhmetroLCD();
+    case 2:
+      ELEGIR_MODO_escrbir_LCD();
     break;
-    case 3:  //MODO BLUETOOTH
-      //escribirBluetoothLCD();
+    case 3:
+      ELEGIR_GRADOS_RADIANES_LCD();
     break;
-    case 4:  //MODO CONFIGURACIÓN
-      //escribirConfiguracionLCD();
+    case 4:
+      
+    break;
+    case 5:
+      MULT_ELEGIR_SUBMODO_LCD();
+    break;
+    case 6:
+      
+    break;
+    case 7:
+      MULT_OHMETRO_LCD();
     break;
   }
 }
