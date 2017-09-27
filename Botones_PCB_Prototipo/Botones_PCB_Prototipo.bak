@@ -1,0 +1,183 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:switches
+LIBS:Botones_PCB_Prototipo-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L SW_DIP_x01 SW2
+U 1 1 596898F9
+P 5100 3900
+F 0 "SW2" H 5100 4050 50  0000 C CNN
+F 1 "SW_DIP_x01" H 5100 3750 50  0000 C CNN
+F 2 "footprint:Button_V2" H 5100 3900 50  0001 C CNN
+F 3 "" H 5100 3900 50  0000 C CNN
+	1    5100 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L SW_DIP_x01 SW5
+U 1 1 59689975
+P 5800 3900
+F 0 "SW5" H 5800 4050 50  0000 C CNN
+F 1 "SW_DIP_x01" H 5800 3750 50  0000 C CNN
+F 2 "footprint:Button_V5" H 5800 3900 50  0001 C CNN
+F 3 "" H 5800 3900 50  0000 C CNN
+	1    5800 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L SW_DIP_x01 SW3
+U 1 1 596899CA
+P 5100 4300
+F 0 "SW3" H 5100 4450 50  0000 C CNN
+F 1 "SW_DIP_x01" H 5100 4150 50  0000 C CNN
+F 2 "footprint:Button_V3" H 5100 4300 50  0001 C CNN
+F 3 "" H 5100 4300 50  0000 C CNN
+	1    5100 4300
+	1    0    0    -1  
+$EndComp
+$Comp
+L SW_DIP_x01 SW6
+U 1 1 59689A57
+P 5800 4300
+F 0 "SW6" H 5800 4450 50  0000 C CNN
+F 1 "SW_DIP_x01" H 5800 4150 50  0000 C CNN
+F 2 "footprint:Button_V6" H 5800 4300 50  0001 C CNN
+F 3 "" H 5800 4300 50  0000 C CNN
+	1    5800 4300
+	1    0    0    -1  
+$EndComp
+$Comp
+L SW_DIP_x01 SW4
+U 1 1 5968994A
+P 5800 3500
+F 0 "SW4" H 5800 3650 50  0000 C CNN
+F 1 "SW_DIP_x01" H 5800 3350 50  0000 C CNN
+F 2 "footprint:Button_V4" H 5800 3500 50  0001 C CNN
+F 3 "" H 5800 3500 50  0000 C CNN
+	1    5800 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L SW_DIP_x01 SW1
+U 1 1 5968986F
+P 5100 3500
+F 0 "SW1" H 5100 3650 50  0000 C CNN
+F 1 "SW_DIP_x01" H 5100 3350 50  0000 C CNN
+F 2 "footprint:button rubber pad" H 5100 3500 50  0001 C CNN
+F 3 "" H 5100 3500 50  0000 C CNN
+	1    5100 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6100 4300 6100 4100
+Wire Wire Line
+	6100 4100 5400 4100
+Wire Wire Line
+	5400 4100 5400 4300
+Wire Wire Line
+	6100 3900 6100 3700
+Wire Wire Line
+	6100 3700 5400 3700
+Wire Wire Line
+	5400 3700 5400 3900
+Wire Wire Line
+	6100 3500 6100 3300
+Wire Wire Line
+	6100 3300 5400 3300
+Wire Wire Line
+	5400 3300 5400 3500
+Connection ~ 4800 3900
+Connection ~ 4800 3500
+Connection ~ 5500 3900
+Connection ~ 5500 3500
+$Comp
+L CONN_01X03 P?
+U 1 1 5975BB6F
+P 6600 3750
+F 0 "P?" H 6600 3950 50  0000 C CNN
+F 1 "CONN_01X03" V 6700 3750 50  0000 C CNN
+F 2 "" H 6600 3750 50  0000 C CNN
+F 3 "" H 6600 3750 50  0000 C CNN
+	1    6600 3750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6100 3500 6400 3500
+Wire Wire Line
+	6400 3500 6400 3650
+Wire Wire Line
+	6100 3900 6300 3900
+Wire Wire Line
+	6300 3900 6300 3750
+Wire Wire Line
+	6300 3750 6400 3750
+Wire Wire Line
+	6400 3850 6400 4300
+Wire Wire Line
+	6400 4300 6100 4300
+$Comp
+L CONN_01X02 P?
+U 1 1 5975BD54
+P 5150 2700
+F 0 "P?" H 5150 2850 50  0000 C CNN
+F 1 "CONN_01X02" V 5250 2700 50  0000 C CNN
+F 2 "" H 5150 2700 50  0000 C CNN
+F 3 "" H 5150 2700 50  0000 C CNN
+	1    5150 2700
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	4800 3000 4800 4300
+Wire Wire Line
+	5500 3000 5500 4300
+Wire Wire Line
+	4800 3000 5100 3000
+Wire Wire Line
+	5100 3000 5100 2900
+Wire Wire Line
+	5200 2900 5200 3000
+Wire Wire Line
+	5200 3000 5500 3000
+$EndSCHEMATC

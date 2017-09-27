@@ -1,0 +1,14 @@
+Por hacer:
+-Esquematico bt
+
+Dudas:
+-Boton de reset sin pullup/pulldown
+
+
+
+SOLUCIONADO:
+-Segun adafruit la bateria va conectada aun pin analogico 
+  para poder monitorizarla y en el esquematico está
+  conectado a uno digital. RESPUESTA: EN EL ESQUEMATICO DE
+  MICROCHIP.COM EL PIN UTILIZADO ES VERDADERAMENTE ANALOGICO.
+

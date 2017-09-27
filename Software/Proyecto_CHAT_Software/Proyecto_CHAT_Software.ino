@@ -1,16 +1,16 @@
 /* PROYECTO CHAT
     Hecho por: Pablo García Jaén - https://twitter.com/PabloGarciaJaen -
-  
-    **Última modificación: 20/07/2017
+
+    **Última modificación: 20/07/2017 d.C
     **Última modificación hecha por: Pablo García Jaén
-  
+
     Proyecto CHAT is licensed under
     a Creative Commons Reconocimiento-Compartir Igual 4.0 Internacional License.
     Puede hallar permisos más allá de los concedidos con esta licencia en
     https://moaisenergy.com/acerca-de/
-  
+
     Proyecto publicado en: https://moaisenergy.com/proyecto-chat/
-    
+
     **Datos importantes:
     -Placa utilizada: Adafruit Feather M0
     -Pantalla utilizada: LCD 16x02 sin luz de fondo. Referencia: RC1602ARS-DSO-A
@@ -120,91 +120,96 @@ boolean activadorRadianes = 0;
 boolean activadorAnsFinalOperacion = 0;
 
 //SIGNOS Y OPERACION
-  const char MULTIPLICACION = 'x';
-  const char DIVISION = '/';
-  const char SUMA = '+';
-  const char RESTA = '-';
-  const char POTENCIA = 'e';
-  const char RAIZ_CUADRADA = 'r';
-  const char RAIZ_X = 'R';
-  const char LOGARITMO_BASE_10 = 'L';
-  const char LOGARITMO_NEPERIANO = 'l';
+const char MULTIPLICACION = 'x';
+const char DIVISION = '/';
+const char SUMA = '+';
+const char RESTA = '-';
+const char POTENCIA = 'e';
+const char RAIZ_CUADRADA = 'r';
+const char RAIZ_X = 'R';
+const char LOGARITMO_BASE_10 = 'L';
+const char LOGARITMO_NEPERIANO = 'l';
 
-  const char SEN = 's';
-  const char COS = 'c';
-  const char TAN = 't';
+const char SEN = 's';
+const char COS = 'c';
+const char TAN = 't';
 
-  const char ARCOSENO = 'S';
-  const char ARCOCOSENO = 'F';
-  const char ARCOTANGENTE = 'T';
+const char ARCOSENO = 'S';
+const char ARCOCOSENO = 'F';
+const char ARCOTANGENTE = 'T';
 
-  const char NUMERO_PI = 'P';
-  const char NUMERO_e = 'n';
+const char NUMERO_PI = 'P';
+const char NUMERO_e = 'n';
 
-  const char PARENTESIS_ABRIR = '(';
-  const char PARENTESIS_CERRAR = ')';
+const char PARENTESIS_ABRIR = '(';
+const char PARENTESIS_CERRAR = ')';
 
-  const char ARRIBA = 'k';
-  const char ABAJO = 'p';
-  const char DERECHA = 'v';
-  const char IZQUIERDA = 'u';
+const char ARRIBA = 'k';
+const char ABAJO = 'p';
+const char DERECHA = 'v';
+const char IZQUIERDA = 'u';
 
-  const char SHIFT = 'f';
-  const char MODO = 'M';
-  
-  const char BORRAR_AC = 'a';
-  const char BORRAR_DEL = 'd';
+const char SHIFT = 'f';
+const char MODO = 'M';
 
-  const char ANS = 'y';
+const char BORRAR_AC = 'a';
+const char BORRAR_DEL = 'd';
 
-  const char MODO_CALCULADORA = 1;
-  const char MODO_MULTIMETRO = 5;
-  const char MODO_BLUETOOTH = 6;
+const char ANS = 'y';
 
-  const char MODO_OHMETRO = 7;
+const char MODO_CALCULADORA = 1;
+const char MODO_MULTIMETRO = 5;
+const char MODO_BLUETOOTH = 6;
 
-byte RAIZ_CARACTER[8] = {                  
+const char MODO_OHMETRO = 7;
+
+
+
+String codigoSecreto = "5964.37.66429.94269";
+
+
+byte RAIZ_CARACTER[8] = {
   0b00111,
   0b00100,
   0b00100,
-  0b00100,   
-  0b10100, 
-  0b01100,   
-  0b00100,   
-  0b00000   
+  0b00100,
+  0b10100,
+  0b01100,
+  0b00100,
+  0b00000
 };
 
-byte RAIZ_DE_X_CARACTER[8] = {                  
+byte RAIZ_DE_X_CARACTER[8] = {
   0b11001,
   0b00110,
   0b01100,
-  0b10011,   
-  0b00000, 
-  0b00000,   
-  0b00000,   
-  0b00000   
+  0b10011,
+  0b00000,
+  0b00000,
+  0b00000,
+  0b00000
 };
 
-byte NUMERO_PI_CARACTER[8] = {                  
+byte NUMERO_PI_CARACTER[8] = {
   0b00000,
   0b11111,
   0b01010,
-  0b01010,   
-  0b01010, 
-  0b01011,   
-  0b10010,   
-  0b00000   
+  0b01010,
+  0b01010,
+  0b01011,
+  0b10010,
+  0b00000
 };
 
-byte NUMERO_E_CARACTER[8] = {         
+byte NUMERO_E_CARACTER[8] = {
   0b00000,
   0b00110,
   0b01001,
   0b11010,
-  0b11100,   
-  0b11001, 
-  0b01110,     
-  0b00000   
+  0b11100,
+  0b11001,
+  0b01110,
+  0b00000
 };
 
 byte ELEVADO_MENOS_UNO_CARACTER[8] = {
@@ -212,10 +217,10 @@ byte ELEVADO_MENOS_UNO_CARACTER[8] = {
   0b00001,
   0b11101,
   0b00001,
-  0b00001,   
-  0b00000, 
-  0b00000,     
-  0b00000  
+  0b00001,
+  0b00000,
+  0b00000,
+  0b00000
 };
 
 byte OHMIO_CARACTER[8] = {
@@ -223,10 +228,10 @@ byte OHMIO_CARACTER[8] = {
   0b00000,
   0b01110,
   0b10001,
-  0b10001,   
-  0b01010, 
-  0b11011,     
-  0b00000  
+  0b10001,
+  0b01010,
+  0b11011,
+  0b00000
 };
 
 //FUNCIÓN PARA LEER LOS BOTONES.
@@ -240,12 +245,15 @@ void leerBotones() {
   botonesC = keypad2.getKey();                  //asociamos el tercer tercio del teclado con la variable botonesC
   if (botonesA) {                               //si botonesA tiene algún dato disponible... es decir, si hemos pulsado un botón del primer tercio del teclado
     botones = botonesA;                         //guardamos en la variable global de los botones el valor obtenido del primer tercio del teclado (en caso de que haya algún dato disponible)
+    Serial.println(botones);
   }
   if (botonesB) {                               //lo mismo pero con el segundo tercio del teclado
     botones = botonesB;
+    Serial.println(botones);
   }
   if (botonesC) {                               //lo mismo pero con el tercer tercio del teclado
     botones = botonesC;
+    Serial.println(botones);
   }
 }
 
@@ -287,13 +295,13 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
   String a = stringOperacion;
   String b = stringOperacion;
   //Serial.println("WIIG");
-  
+
   if ((botones != IZQUIERDA) && (botones != DERECHA)) {
     //stringOperacion = a.substring(0,xparpadeo) + prueba + b.substring(xparpadeo+1);
     //stringOperacion = a.substring(0,xparpadeo) + botones;// + b.substring(xparpadeo+1);  /////////////////////// P R E G U N T A R ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    stringOperacion = a.substring(0,xparpadeo);
+    stringOperacion = a.substring(0, xparpadeo);
     stringOperacion += botones;
-    stringOperacion += b.substring(xparpadeo+1);
+    stringOperacion += b.substring(xparpadeo + 1);
     //stringOperacion +=
   }
   if ((botones >= 48) && (botones <= 57)) {
@@ -323,30 +331,30 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
     //intervalo+=2;
   }
   else if (botones == BORRAR_AC) {
-    if (xparpadeo == stringOperacion.length()-1) {
+    if (xparpadeo == stringOperacion.length() - 1) {
       lcd.setCursor(xparpadeoLCD, 0);
       lcd.print("   ");
-      if ((stringOperacion.charAt(xparpadeo-1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOTANGENTE)) {
+      if ((stringOperacion.charAt(xparpadeo - 1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo - 1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo - 1) == ARCOTANGENTE)) {
         xparpadeoLCD -= 5;
       }
-      else if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN) or (stringOperacion.charAt(xparpadeo-1) == LOGARITMO_BASE_10) or (stringOperacion.charAt(xparpadeo-1) == ANS)) { //error al borrar seno, coseno, tangente
-        xparpadeoLCD -=3;
+      else if ((stringOperacion.charAt(xparpadeo - 1) == COS) or (stringOperacion.charAt(xparpadeo - 1) == SEN) or (stringOperacion.charAt(xparpadeo - 1) == TAN) or (stringOperacion.charAt(xparpadeo - 1) == LOGARITMO_BASE_10) or (stringOperacion.charAt(xparpadeo - 1) == ANS)) { //error al borrar seno, coseno, tangente
+        xparpadeoLCD -= 3;
       }
-      else if ((stringOperacion.charAt(xparpadeo-1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo-1) == RAIZ_X)) {
-        xparpadeoLCD -=2;
+      else if ((stringOperacion.charAt(xparpadeo - 1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo - 1) == RAIZ_X)) {
+        xparpadeoLCD -= 2;
       }
 
       else {
         xparpadeoLCD--;
       }
-      stringOperacion = a.substring(0,xparpadeo-1);
-      
-      
+      stringOperacion = a.substring(0, xparpadeo - 1);
+
+
       xparpadeo--;
-      
+
     }
     else {
-      stringOperacion = a.substring(0,xparpadeo) + b.substring(xparpadeo+1);
+      stringOperacion = a.substring(0, xparpadeo) + b.substring(xparpadeo + 1);
     }
   }
   else if (botones == BORRAR_DEL) {
@@ -359,20 +367,20 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
   }
 
   else if ((botones == IZQUIERDA) && (xparpadeo > 0))  {
-    
+
     lcd.setCursor(xparpadeoLCD, 0);
     lcd.print(" ");
-    if ((stringOperacion.charAt(xparpadeo-1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo-1) == ARCOTANGENTE)) {
+    if ((stringOperacion.charAt(xparpadeo - 1) == ARCOSENO) or (stringOperacion.charAt(xparpadeo - 1) == ARCOCOSENO) or (stringOperacion.charAt(xparpadeo - 1) == ARCOTANGENTE)) {
       xparpadeoLCD -= 5;
       //intervalo += 5;
     }
-    if ((stringOperacion.charAt(xparpadeo-1) == COS) or (stringOperacion.charAt(xparpadeo-1) == SEN) or (stringOperacion.charAt(xparpadeo-1) == TAN) or (stringOperacion.charAt(xparpadeo-1) == LOGARITMO_BASE_10) or (stringOperacion.charAt(xparpadeo-1) == ANS)) { //error al borrar seno, coseno, tangente
-      xparpadeoLCD -=3;
-      //intervalo += 3; 
+    if ((stringOperacion.charAt(xparpadeo - 1) == COS) or (stringOperacion.charAt(xparpadeo - 1) == SEN) or (stringOperacion.charAt(xparpadeo - 1) == TAN) or (stringOperacion.charAt(xparpadeo - 1) == LOGARITMO_BASE_10) or (stringOperacion.charAt(xparpadeo - 1) == ANS)) { //error al borrar seno, coseno, tangente
+      xparpadeoLCD -= 3;
+      //intervalo += 3;
     }
-    else if ((stringOperacion.charAt(xparpadeo-1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo-1) == RAIZ_X)) {
-      xparpadeoLCD -=2;
-      //intervalo += 2; 
+    else if ((stringOperacion.charAt(xparpadeo - 1) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo - 1) == RAIZ_X)) {
+      xparpadeoLCD -= 2;
+      //intervalo += 2;
     }
     else {
       xparpadeoLCD--;
@@ -386,16 +394,16 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
       //intervalo -= 5;
     }
     if ((stringOperacion.charAt(xparpadeo) == COS) or (stringOperacion.charAt(xparpadeo) == SEN) or (stringOperacion.charAt(xparpadeo) == TAN) or (stringOperacion.charAt(xparpadeo) == LOGARITMO_BASE_10) or (stringOperacion.charAt(xparpadeo) == ANS)) { //error al borrar seno, coseno, tangente
-      xparpadeoLCD +=3;
+      xparpadeoLCD += 3;
       //intervalo -= 3;
     }
     else if ((stringOperacion.charAt(xparpadeo) == LOGARITMO_NEPERIANO) or (stringOperacion.charAt(xparpadeo) == RAIZ_X)) {
-      xparpadeoLCD +=2;
+      xparpadeoLCD += 2;
       //intervalo -= 2;
     }
     else {
       xparpadeoLCD++;
-     // intervalo --;
+      // intervalo --;
     }
     xparpadeo++;
   }
@@ -403,7 +411,7 @@ void CALC_deBotonesAString() {                   //función para guardar el cara
 
 //VARIABLES PARA PODER RESOLVER LOS PARENTESIS
 byte generalInicioParentesis[3] = {0};           //variable donde guardaremos la posicion del primer parentesis de inicio y el último. EXPLICACION: el paréntesis de inicio es: '('. Por ejemplo en la operacion 5*(4*(6+7)) el primer parentesis inicio tiene la posicion 2 y el último 5 (empieza a contar desde el 0)
-byte generalFinalParentesis[3] = {0};            //variable donde haremos lo mismo que en la anterior pero en vez de con el paréntesis inicio lo haremos con el paréntesis final ')'. 
+byte generalFinalParentesis[3] = {0};            //variable donde haremos lo mismo que en la anterior pero en vez de con el paréntesis inicio lo haremos con el paréntesis final ')'.
 boolean contadorInicioFinalParentesis = 0;       //variable donde guardaremos el número de pares de paréntesis. EXPLICACIÓN: en la operación (7*(2+8))/9  hay un total de 2 pares de paréntesis
 boolean activadorGeneralFinalParentesis = 0;     //variable donde almacenaremos un 1 cuando nos encontremos el primer ')'. De esta forma en la operación ((2+8)*3)/(7-2), cuando nos encontremos el primer ')', sabremos que no tendremos que sumar más números al contador de paréntesis (solo nos quedará restar cada vez que encontremos ')') pues la operación que nos interesa sacar es ((2+8)*3) para resorverla.
 boolean activadorInicioParentesis = 0;
@@ -442,7 +450,7 @@ void CALC_distribucionBotones() {
     contadorParentesis = 0;
     //intervalo = 15;
   }
-  if(activadorxParpadeoFinal == 0) {
+  if (activadorxParpadeoFinal == 0) {
     if (botones == SHIFT) {
       activadorShift = 1;
     }
@@ -451,15 +459,15 @@ void CALC_distribucionBotones() {
         case SEN:
           botones = ARCOSENO;
           activadorShift = 0;
-        break;
+          break;
         case COS:
           botones = ARCOCOSENO;
           activadorShift = 0;
-        break;
+          break;
         case TAN:
           botones = ARCOTANGENTE;
           activadorShift = 0;
-        break;
+          break;
       }
     }
     CALC_deBotonesAString();
@@ -624,16 +632,16 @@ void CALC_solucionarOperacion() {
         valorNumerico[contadorValores] = valorNumerico[contadorValores] * -1;
       }
     }
-    
+
     else if ((caracter < 48) or (caracter > 57)) {
       if (activadorDecimales == 1) {
-        if(valorNumerico[contadorValores-1] < 0) {
-          valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] * -1;
-          valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] + valorNumerico[contadorValores];
-          valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] * -1;
+        if (valorNumerico[contadorValores - 1] < 0) {
+          valorNumerico[contadorValores - 1] = valorNumerico[contadorValores - 1] * -1;
+          valorNumerico[contadorValores - 1] = valorNumerico[contadorValores - 1] + valorNumerico[contadorValores];
+          valorNumerico[contadorValores - 1] = valorNumerico[contadorValores - 1] * -1;
         }
         else {
-          valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] + valorNumerico[contadorValores];
+          valorNumerico[contadorValores - 1] = valorNumerico[contadorValores - 1] + valorNumerico[contadorValores];
         }
         valorNumerico[contadorValores] = 0;
         contadorValores--;
@@ -648,8 +656,8 @@ void CALC_solucionarOperacion() {
         activadorDecimales = 0;
       }
 
-      
-      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA) or (caracter == RAIZ_X) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN) or (caracter ==ARCOSENO) or (caracter == ARCOCOSENO) or (caracter == ARCOTANGENTE)) {
+
+      if ((caracter == MULTIPLICACION) or (caracter == DIVISION) or (caracter == POTENCIA) or (caracter == RAIZ_CUADRADA) or (caracter == RAIZ_X) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN) or (caracter == ARCOSENO) or (caracter == ARCOCOSENO) or (caracter == ARCOTANGENTE)) {
         posicionSignos[contadorValores] = caracter;
         if ((caracter == RAIZ_CUADRADA) or (caracter == LOGARITMO_BASE_10) or (caracter == LOGARITMO_NEPERIANO) or (caracter == SEN) or (caracter == COS) or (caracter == TAN) or (caracter == ARCOSENO) or (caracter == ARCOCOSENO) or (caracter == ARCOTANGENTE)) {
           contadorValores++;
@@ -678,28 +686,28 @@ void CALC_solucionarOperacion() {
   }
 
   if (activadorDecimales == 1) {
-    valorNumerico[contadorValores-1] = valorNumerico[contadorValores-1] + valorNumerico[contadorValores];
+    valorNumerico[contadorValores - 1] = valorNumerico[contadorValores - 1] + valorNumerico[contadorValores];
     valorNumerico[contadorValores] = 0;
     contadorValores--;
   }
 
 
 
-/*  for (byte i = 0; i < 5; i++) {
-    Serial.print("numero =  ");
-    Serial.println(valorNumerico[i]);
-    Serial.println(posicionSignos[i]);
-  }
-*/
-  
+  /*  for (byte i = 0; i < 5; i++) {
+      Serial.print("numero =  ");
+      Serial.println(valorNumerico[i]);
+      Serial.println(posicionSignos[i]);
+    }
+  */
+
   contadorValores++; //para las raices que tienen el signo delante del número
 
 
   // T R I G O N O M E T R I A       SENO COSENO TANGENTE
-  for (byte i = 0; i < contadorValores+1; i++) {
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == SEN) {
-      for (int a = i; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
+      for (int a = i; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
       }
       if (activadorRadianes == 1) {
         valorNumerico[i] = sin(valorNumerico[i]);
@@ -707,18 +715,18 @@ void CALC_solucionarOperacion() {
       else {
         valorNumerico[i] = sin(deRadianesAGrados(valorNumerico[i]));
       }
-      
+
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
   }
-  for (byte i = 0; i < contadorValores+1; i++) {
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == COS) {
-      for (int a = i; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
+      for (int a = i; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
       }
       if (activadorRadianes == 1) {
         valorNumerico[i] = cos(valorNumerico[i]);
@@ -726,18 +734,18 @@ void CALC_solucionarOperacion() {
       else {
         valorNumerico[i] = cos(deRadianesAGrados(valorNumerico[i]));
       }
-      
+
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
   }
-  for (byte i = 0; i < contadorValores+1; i++) {
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == TAN) {
-      for (int a = i; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
+      for (int a = i; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
       }
       if (activadorRadianes == 1) {
         valorNumerico[i] = tan(valorNumerico[i]);
@@ -745,10 +753,10 @@ void CALC_solucionarOperacion() {
       else {
         valorNumerico[i] = tan(deRadianesAGrados(valorNumerico[i]));
       }
-      
+
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
@@ -756,10 +764,10 @@ void CALC_solucionarOperacion() {
 
 
   // T R I G O N O M E T R I A       ARCOSENO   ARCOCOSENO   ARCOTANGENTE
-  for (byte i = 0; i < contadorValores+1; i++) {
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == ARCOSENO) {
-      for (int a = i; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
+      for (int a = i; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
       }
       if (activadorRadianes == 1) {
         valorNumerico[i] = asin(valorNumerico[i]);
@@ -767,18 +775,18 @@ void CALC_solucionarOperacion() {
       else {
         valorNumerico[i] = ((asin(valorNumerico[i])) * 360) / (2 * PI);
       }
-      
+
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
   }
-  for (byte i = 0; i < contadorValores+1; i++) {
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == ARCOCOSENO) {
-      for (int a = i; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
+      for (int a = i; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
       }
       if (activadorRadianes == 1) {
         valorNumerico[i] = acos(valorNumerico[i]);
@@ -786,18 +794,18 @@ void CALC_solucionarOperacion() {
       else {
         valorNumerico[i] = ((acos(valorNumerico[i])) * 360) / (2 * PI);
       }
-      
+
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
   }
-  for (byte i = 0; i < contadorValores+1; i++) {
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == ARCOTANGENTE) {
-      for (int a = i; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
+      for (int a = i; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
       }
       if (activadorRadianes == 1) {
         valorNumerico[i] = atan(valorNumerico[i]);
@@ -805,10 +813,10 @@ void CALC_solucionarOperacion() {
       else {
         valorNumerico[i] = ((atan(valorNumerico[i])) * 360) / (2 * PI);
       }
-      
+
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
@@ -818,101 +826,101 @@ void CALC_solucionarOperacion() {
 
 
   // L O G A R I T M O
-  for (byte i = 0; i < contadorValores+1; i++) {
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == LOGARITMO_BASE_10) {
-      for (int a = i; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
+      for (int a = i; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
       }
       valorNumerico[i] = log10(valorNumerico[i]);
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
   }
-  
-  for (byte i = 0; i < contadorValores+1; i++) {
+
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == LOGARITMO_NEPERIANO) {
-      for (int a = i; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
+      for (int a = i; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
       }
       valorNumerico[i] = log(valorNumerico[i]);
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
   }
 
   // P O T E N C I A      Y      R A I Z
-  for (byte i = 0; i < contadorValores+1; i++) {
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == POTENCIA) {
-      valorNumerico[i] = pow(valorNumerico[i], valorNumerico[i+1]);
+      valorNumerico[i] = pow(valorNumerico[i], valorNumerico[i + 1]);
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
   }
-  
-  for (byte i = 0; i < contadorValores+1; i++) {
+
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == RAIZ_CUADRADA) {
-      for (int a = i; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
+      for (int a = i; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
       }
       valorNumerico[i] = pow(valorNumerico[i], 0.5);
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        posicionSignos[a-1] = posicionSignos[a];
-      }
-      i--;
-    }
-  }
-  
-  for (byte i = 0; i < contadorValores+1; i++) {
-    if (posicionSignos[i] == RAIZ_X) {
-      valorNumerico[i] = pow(valorNumerico[i+1], 1/valorNumerico[i]);
-      posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
   }
 
-  
- /*for (byte i = 0; i < 5; i++) {
-    Serial.print("[fd]numero =  ");
-    Serial.println(valorNumerico[i]);
-    Serial.println(posicionSignos[i]);
+  for (byte i = 0; i < contadorValores + 1; i++) {
+    if (posicionSignos[i] == RAIZ_X) {
+      valorNumerico[i] = pow(valorNumerico[i + 1], 1 / valorNumerico[i]);
+      posicionSignos[i] = 0;
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
+        posicionSignos[a - 1] = posicionSignos[a];
+      }
+      i--;
+    }
   }
-*/
+
+
+  /*for (byte i = 0; i < 5; i++) {
+     Serial.print("[fd]numero =  ");
+     Serial.println(valorNumerico[i]);
+     Serial.println(posicionSignos[i]);
+    }
+  */
 
 
   // M U L T I P L I C A C I O N       Y       D I V I S O R
-  for (byte i = 0; i < contadorValores+1; i++) {
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == DIVISION) {
-      valorNumerico[i] = valorNumerico[i] / valorNumerico[i+1];
+      valorNumerico[i] = valorNumerico[i] / valorNumerico[i + 1];
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
   }
-  for (byte i = 0; i < contadorValores+1; i++) {
+  for (byte i = 0; i < contadorValores + 1; i++) {
     if (posicionSignos[i] == MULTIPLICACION) {
-      valorNumerico[i] = valorNumerico[i] * valorNumerico[i+1];
+      valorNumerico[i] = valorNumerico[i] * valorNumerico[i + 1];
       posicionSignos[i] = 0;
-      for (int a = i+1; a <= contadorValores+1; a++) {
-        valorNumerico[a] = valorNumerico[a+1];
-        posicionSignos[a-1] = posicionSignos[a];
+      for (int a = i + 1; a <= contadorValores + 1; a++) {
+        valorNumerico[a] = valorNumerico[a + 1];
+        posicionSignos[a - 1] = posicionSignos[a];
       }
       i--;
     }
@@ -947,12 +955,12 @@ void CALC_solucionarOperacion() {
   }
 
   int posMenos = s.indexOf('-');
-  
+
   if (posMenos > 0) {
     s = s.substring(posMenos);
   }
   return s;
-}
+  }
 */
 void CALC_sustituirParentesis() {
   //Serial.println("[INICIO]CALC_sustituirParentesis");
@@ -994,67 +1002,67 @@ void CALC_escribirLCD() {
     switch (caracter) {
       case '.':
         stringOperacionVisual += '.';
-      break;
+        break;
       case COS:
         stringOperacionVisual += "cos";
-      break;
+        break;
       case ARCOCOSENO:
         stringOperacionVisual += "cosU ";
-      break;
+        break;
       case SEN:
         stringOperacionVisual += "sen";
-      break;
+        break;
       case ARCOSENO:
         stringOperacionVisual += "senU ";
-      break;
+        break;
       case TAN:
         stringOperacionVisual += "tan";
-      break;
+        break;
       case ARCOTANGENTE:
         stringOperacionVisual += "tanU ";
-      break;
+        break;
       case LOGARITMO_BASE_10:
         stringOperacionVisual += "log";
-      break;
+        break;
       case LOGARITMO_NEPERIANO:
         stringOperacionVisual += "ln";
-      break;
+        break;
       case SUMA:
         stringOperacionVisual += "+";
-      break;
+        break;
       case RESTA:
         stringOperacionVisual += "-";
-      break;
+        break;
       case MULTIPLICACION:
         stringOperacionVisual += "x";
-      break;
+        break;
       case DIVISION:
         stringOperacionVisual += "/";
-      break;
+        break;
       case RAIZ_CUADRADA:
         stringOperacionVisual += "K";
-      break;
+        break;
       case RAIZ_X:
         stringOperacionVisual += "qK";
-      break;
+        break;
       case POTENCIA:
         stringOperacionVisual += "^";
-      break;
+        break;
       case '(':
         stringOperacionVisual += "(";
-      break;
+        break;
       case ')':
         stringOperacionVisual += ")";
-      break;
+        break;
       case NUMERO_PI:
         stringOperacionVisual += "P";
-      break;
+        break;
       case NUMERO_e:
         stringOperacionVisual += "N";
-      break;
+        break;
       case ANS:
         stringOperacionVisual += "Ans";
-      break;
+        break;
     }
   }
   stringOperacionVisualLCD =  stringOperacionVisual;
@@ -1062,7 +1070,7 @@ void CALC_escribirLCD() {
   byte xparpadeoLCD_VISUAL = xparpadeoLCD;
   if (xparpadeoLCD > 15) {//&& (valorx - intervalo > 0)) {
     //byte intervalo = xparpadeoLCD;
-    stringOperacionVisualLCD = stringOperacionVisual.substring(xparpadeoLCD-15);
+    stringOperacionVisualLCD = stringOperacionVisual.substring(xparpadeoLCD - 15);
     stringOperacionVisualLCD += " ";
     xparpadeoLCD_VISUAL = 15;
   }
@@ -1078,59 +1086,59 @@ void CALC_escribirLCD() {
     lcd.print("                ");
   }
   if ((millis() - tiempoParpadeo >= TIEMPO_PARPADEO / 2) && (millis() - tiempoParpadeo <= TIEMPO_PARPADEO)) {
-  lcd.setCursor(0, 0);
-  for (byte i = 0; i < valorx; i++) {
-    if (stringOperacionVisualLCD.charAt(i) == 'K') {
-      lcd.write(byte(0));
+    lcd.setCursor(0, 0);
+    for (byte i = 0; i < valorx; i++) {
+      if (stringOperacionVisualLCD.charAt(i) == 'K') {
+        lcd.write(byte(0));
+      }
+      if (stringOperacionVisualLCD.charAt(i) == 'q') {
+        lcd.write(byte(1));
+      }
+      if (stringOperacionVisualLCD.charAt(i) == 'P') {
+        lcd.write(byte(2));
+      }
+      if (stringOperacionVisualLCD.charAt(i) == 'N') {
+        lcd.write(byte(3));
+      }
+      if (stringOperacionVisualLCD.charAt(i) == 'U') {
+        lcd.write(byte(4));
+      }
+      else if ((stringOperacionVisualLCD.charAt(i) != 'K') && (stringOperacionVisualLCD.charAt(i) != 'q') && (stringOperacionVisualLCD.charAt(i) != 'P') && (stringOperacionVisualLCD.charAt(i) != 'N') && (stringOperacionVisualLCD.charAt(i) != 'U')) {
+        lcd.print(stringOperacionVisualLCD.charAt(i));
+      }
     }
-    if (stringOperacionVisualLCD.charAt(i) == 'q') {
-      lcd.write(byte(1));
-    }
-    if (stringOperacionVisualLCD.charAt(i) == 'P') {
-      lcd.write(byte(2));
-    }
-    if (stringOperacionVisualLCD.charAt(i) == 'N') {
-      lcd.write(byte(3));
-    }
-    if (stringOperacionVisualLCD.charAt(i) == 'U') {
-      lcd.write(byte(4));
-    }
-    else if ((stringOperacionVisualLCD.charAt(i) != 'K') && (stringOperacionVisualLCD.charAt(i) != 'q') && (stringOperacionVisualLCD.charAt(i) != 'P') && (stringOperacionVisualLCD.charAt(i) != 'N') && (stringOperacionVisualLCD.charAt(i) != 'U')) {
-      lcd.print(stringOperacionVisualLCD.charAt(i));
-    }
-  }
   }
   else if (botones) {
-  lcd.setCursor(0, 0);
-  for (byte i = 0; i < valorx; i++) {
-    if (stringOperacionVisualLCD.charAt(i) == 'K') {
-      lcd.write(byte(0));
-    }
-    if (stringOperacionVisualLCD.charAt(i) == 'q') {
-      lcd.write(byte(1));
-    }
-    if (stringOperacionVisualLCD.charAt(i) == 'P') {
-      lcd.write(byte(2));
-    }
-    if (stringOperacionVisualLCD.charAt(i) == 'N') {
-      lcd.write(byte(3));
-    }
-    if (stringOperacionVisualLCD.charAt(i) == 'U') {
-      lcd.write(byte(4));
-    }
-    else if ((stringOperacionVisualLCD.charAt(i) != 'K') && (stringOperacionVisualLCD.charAt(i) != 'q') && (stringOperacionVisualLCD.charAt(i) != 'P') && (stringOperacionVisualLCD.charAt(i) != 'N') && (stringOperacionVisualLCD.charAt(i) != 'U')) {
-      lcd.print(stringOperacionVisualLCD.charAt(i));
+    lcd.setCursor(0, 0);
+    for (byte i = 0; i < valorx; i++) {
+      if (stringOperacionVisualLCD.charAt(i) == 'K') {
+        lcd.write(byte(0));
+      }
+      if (stringOperacionVisualLCD.charAt(i) == 'q') {
+        lcd.write(byte(1));
+      }
+      if (stringOperacionVisualLCD.charAt(i) == 'P') {
+        lcd.write(byte(2));
+      }
+      if (stringOperacionVisualLCD.charAt(i) == 'N') {
+        lcd.write(byte(3));
+      }
+      if (stringOperacionVisualLCD.charAt(i) == 'U') {
+        lcd.write(byte(4));
+      }
+      else if ((stringOperacionVisualLCD.charAt(i) != 'K') && (stringOperacionVisualLCD.charAt(i) != 'q') && (stringOperacionVisualLCD.charAt(i) != 'P') && (stringOperacionVisualLCD.charAt(i) != 'N') && (stringOperacionVisualLCD.charAt(i) != 'U')) {
+        lcd.print(stringOperacionVisualLCD.charAt(i));
+      }
     }
   }
-  }
-  
-  lcd.setCursor(stringOperacionVisualLCD.length()+1, 0);
+
+  lcd.setCursor(stringOperacionVisualLCD.length() + 1, 0);
   lcd.print("                ");
   lcd.setCursor(0, 1);
   lcd.print(resultado);
   lcd.print("                ");
-  
-  
+
+
   if (activadorAnsFinalOperacion == 0) {
     if (millis() - tiempoParpadeo <= TIEMPO_PARPADEO / 2) {
       lcd.setCursor(xparpadeoLCD_VISUAL, 0);
@@ -1166,21 +1174,21 @@ void ELEGIR_MODO_escrbir() {
 }
 
 void ELEGIR_MODO_escrbir_LCD() {
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print(" CALC  MULT  BT ");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("  1     2    3  ");
 }
 
 void ELEGIR_GRADOS_RADIANES_LCD() {
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   if (activadorRadianes == 0) {
     lcd.print("GRADOS radianes");
   }
   else if (activadorRadianes == 1) {
     lcd.print("grados RADIANES");
   }
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("  1        2    ");
 }
 
@@ -1198,9 +1206,9 @@ void ELEGIR_GRADOS_RADIANES() {
 }
 
 void MULT_ELEGIR_SUBMODO_LCD() {
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print(" OHM  VOLT  AMP ");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("  1     2    3  ");
 }
 
@@ -1219,18 +1227,18 @@ void MULT_ELEGIR_SUBMODO() {
   }
 }
 
-void MULT_OHMETRO_LCD(){
-  lcd.setCursor(0,0);
+void MULT_OHMETRO_LCD() {
+  lcd.setCursor(0, 0);
   lcd.print("Ohmetro");
-  
+
   if (activadorOhmetro == 1) {
-    lcd.setCursor(0,1);
+    lcd.setCursor(0, 1);
     //lcd.print(ohmios);
     //lcd.write(byte(5));
     //lcd.print("               ");
   }
   else {
-    lcd.setCursor(0,1);
+    lcd.setCursor(0, 1);
     //lcd.print("Valor indefinido");
   }
 }
@@ -1245,28 +1253,27 @@ void MULT_OHMETRO() {
   else {
     activadorOhmetro = 1;
   }
-  lcd.setCursor(0,1);
-  
-  double voltage = valorRecibido*(5.0000/1023.0000); 
-  float resistor=10000*(5-voltage)/voltage; 
+  lcd.setCursor(0, 1);
 
-  
+  double voltage = valorRecibido * (5.0000 / 1023.0000);
+  float resistor = 10000 * (5 - voltage) / voltage;
+
+
   lcd.print(resistor);
   lcd.print("             ");
   //ohmios = (unsigned long)1023 * resistenciaFija / valorRecibido - resistenciaFija;
 
 }
 
-void escribirConfiguracionLCD() {
 
-}
 
-void escribirBluetoothLCD() {
 
-}
+
+
+
 
 void setup() {
-  //Serial.begin(9600);
+  Serial.begin(9600);
   keypad.begin(I2C_ADDRESS, makeKeymap(keys));
   keypad1.begin(I2C_ADDRESS1, makeKeymap(keys1));
   keypad2.begin(I2C_ADDRESS2, makeKeymap(keys2));
@@ -1282,7 +1289,9 @@ void setup() {
   lcd.createChar(3, NUMERO_E_CARACTER);
   lcd.createChar(4, ELEVADO_MENOS_UNO_CARACTER);
   lcd.createChar(5, OHMIO_CARACTER);
+  
 
+  
   lcd.clear();
   lcd.setCursor(5, 1);
   lcd.print("MoaisEnergy");
@@ -1290,8 +1299,8 @@ void setup() {
   lcd.clear();
   tiempoParpadeo = millis();
   tiempoReinicioOhms = millis();
-
-
+  
+  
   //////////////////////////////////////////////////////
   //Serial.println("INICIOOOOOOOOO");
 
@@ -1311,52 +1320,57 @@ void loop() {
   GENERAL_distribucionBotones();
   switch (modo) {
     case 1: //MODO CALCULADORA
+      //JUEGO();
+      //JUEGO_LCD();
+
       if (botones) {
         CALC_distribucionBotones();
       }
-    break;
+      break;
     case 2:
       ELEGIR_MODO_escrbir();
-    break;
+      break;
     case 3:
       ELEGIR_GRADOS_RADIANES();
-    break;
+      break;
     case 4:
-      
-    break;
+
+      break;
     case 5:
       MULT_ELEGIR_SUBMODO();
-    break;
+      break;
     case 6:
 
-    break;
+      break;
     case 7:
       MULT_OHMETRO();
-    break;
+      break;
   }
 
   //sacamos los datos al exterior
   switch (modo) {
     case 1:
+
+
       CALC_escribirLCD();
-    break;
+      break;
     case 2:
       ELEGIR_MODO_escrbir_LCD();
-    break;
+      break;
     case 3:
       ELEGIR_GRADOS_RADIANES_LCD();
-    break;
+      break;
     case 4:
-      
-    break;
+
+      break;
     case 5:
       MULT_ELEGIR_SUBMODO_LCD();
-    break;
+      break;
     case 6:
-      
-    break;
+
+      break;
     case 7:
       MULT_OHMETRO_LCD();
-    break;
+      break;
   }
 }
